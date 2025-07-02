@@ -968,34 +968,6 @@ export default class ApiService {
     }
 
     /**
-     * Send newsletter email
-     * @param {Object} newsletterData - Object containing newsletter details
-     * @returns {Promise<Object>} Response object with status and message
-     */
-    static async sendNewsletterEmail(newsletterData) {
-        try {
-            const response = await axios.post(
-                `${this.BASE_URL}/api/v1/Mail/Newsletter`,
-                newsletterData,
-                { headers: this.getHeader() }
-            );
-
-            console.log("Newsletter email response:", response.data);
-
-            return {
-                status: 200,
-                message: "Newsletter email sent successfully"
-            };
-        } catch (error) {
-            console.error("Error sending newsletter email:", error);
-            return {
-                status: error.response?.status || 400,
-                message: error.response?.data?.message || "Failed to send newsletter email"
-            };
-        }
-    }
-
-    /**
      * Get a list of all reviews
      * @param {Object} params - Query parameters (pageSize, page, searchTerm, includeDeleted, arrayobject)
      * @returns {Promise<Object>} Response object with status and data/message
@@ -1780,6 +1752,68 @@ export default class ApiService {
             return {
                 status: error.response?.status || 400,
                 message: error.response?.data?.message || error.message || "Failed to update workshop schedule"
+            };
+        }
+    }
+
+    /**
+     * Get a list of all bookings for the customer
+     * @param {Object} params - Query parameters (pageSize, page, searchTerm, includeDeleted)
+     * @returns {Promise<Object>} Response object with status and data/message
+     */
+    static async getBookingsForCustomer(params = {}) {
+        try {
+            const response = await axios.get(
+                `${this.BASE_URL}/api/v1/Booking/customer`,
+                {
+                    headers: this.getHeader(),
+                    params: params
+                }
+            );
+
+            console.log("Fetched bookings for customer:", response.data);
+
+            return {
+                status: 200,
+                data: response.data,
+                message: "Bookings for customer fetched successfully"
+            };
+        } catch (error) {
+            console.error("Error fetching bookings for customer:", error);
+            return {
+                status: error.response?.status || 400,
+                message: error.response?.data?.message || "Failed to fetch bookings for customer"
+            };
+        }
+    }
+
+    /**
+     * Get a list of all bookings for admin and organizer
+     * @param {Object} params - Query parameters (pageSize, page, searchTerm, includeDeleted)
+     * @returns {Promise<Object>} Response object with status and data/message
+     */
+    static async getBookingsForAdminAndOrganizer(params = {}) {
+        try {
+            const response = await axios.get(
+                `${this.BASE_URL}/api/v1/Booking/analys`,
+                {
+                    headers: this.getHeader(),
+                    params: params
+                }
+            );
+
+            console.log("Fetched bookings for admin and organizer:", response.data);
+
+            return {
+                status: 200,
+                data: response.data,
+                message: "Bookings for admin and organizer fetched successfully"
+            };
+        } catch (error) {
+            console.error("Error fetching bookings for admin and organizer:", error);
+            return {
+                status: error.response?.status || 400,
+                message: error.response?.data?.message || "Failed to fetch bookings for admin and organizer"
             };
         }
     }

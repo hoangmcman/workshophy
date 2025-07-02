@@ -68,10 +68,26 @@ const Checkout = () => {
     try {
       const bookingResponse = await ApiService.createBooking(bookingData);
 
-      if (bookingResponse.status === 200 && bookingResponse.data?.success && typeof bookingResponse.data.data === 'string') {
+      if (
+        bookingResponse.status === 200 &&
+        bookingResponse.data?.success &&
+        typeof bookingResponse.data.data === 'string'
+      ) {
+        // Gửi email xác nhận vé
+        const emailPayload = {
+          email: localStorage.getItem("userEmail"), // đảm bảo đã có email ở localStorage
+          title: workshop.title,
+          date: workshop.date,
+          time: workshop.time,
+          location: workshop.location,
+          quantity: quantity,
+          total: workshop.originalPrice * quantity
+        };
+
+        await ApiService.sendTicketConfirmationEmail(emailPayload);
+
         message.success('Đặt vé thành công!');
-        console.log('Redirecting to:', bookingResponse.data.data);
-        window.location.href = bookingResponse.data.data; 
+        window.location.href = bookingResponse.data.data;
       } else {
         message.error(bookingResponse.message || 'Đặt vé thất bại.');
       }
@@ -80,6 +96,7 @@ const Checkout = () => {
       console.error(error);
     }
   };
+
 
   if (!workshop) {
     return (

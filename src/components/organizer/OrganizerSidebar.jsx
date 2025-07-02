@@ -1,13 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, ChevronRight, ChevronLeft, ClipboardList, BarChart2, User, LogOut } from 'lucide-react';
+import { Menu, CircleDollarSign , ChevronRight, ChevronLeft, ClipboardList, BarChart2, User, BookText, LogOut } from 'lucide-react';
 
 // Sidebar Component
 const OrganizerSidebar = ({ isOpen, toggleSidebar }) => {
   const menuItems = [
     { icon: <BarChart2 size={20} />, name: 'Bảng thống kê', link: '/organizerdashboard'},
+    { icon: <CircleDollarSign size={20} />, name: 'Doanh thu', link: '/income' },
     { icon: <ClipboardList size={20} />, name: 'Workshop của tôi', link: '/myworkshop' },
     { icon: <User size={20} />, name: 'Tài khoản của tôi', link: '/organizerprofile' },
+    { icon: <BookText size={20} />, name: 'Điều khoản nhà tổ chức', link: '/organizerpolicy' },
     { icon: <LogOut size={20} />, name: 'Đăng xuất', link: '/loginuser' },
   ];
 

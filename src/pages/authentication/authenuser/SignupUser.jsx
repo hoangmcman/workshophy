@@ -12,9 +12,9 @@ const SignupUser = () => {
     confirmPassword: '',
     phoneNumber: '',
     isOrganizer: false,
-    accountNumber: '',
+    accountBank: '',
   });
-  
+
 
   const navigate = useNavigate();
 
@@ -42,7 +42,7 @@ const SignupUser = () => {
         phoneNumber: formData.phoneNumber,
         userRole: formData.isOrganizer ? 2 : 3,
         status: 1,
-        accountNumber: formData.isOrganizer ? formData.accountNumber : undefined,
+        accountBank: formData.isOrganizer ? formData.accountBank : undefined,
       };
 
       console.log('Signup attempt with:', registrationData);
@@ -67,21 +67,26 @@ const SignupUser = () => {
             localStorage.setItem('userId', userInfoResponse.data.id);
           }
 
-          await Swal.fire(
-            'Thành công',
-            'Bạn đã đăng ký thành công! Xin hãy dành vài giây để khảo sát sở thích của bạn.',
-            'success'
-          );
-
           if (!formData.isOrganizer) {
+            await Swal.fire(
+              'Thành công',
+              'Bạn đã đăng ký thành công! Xin hãy dành vài giây để khảo sát sở thích của bạn.',
+              'success'
+            );
             navigate('/questions');
           } else {
+            await Swal.fire(
+              'Thành công',
+              'Đăng ký tài khoản thành công! Xin hãy đăng nhập để sử dụng.',
+              'success'
+            );
             navigate('/loginuser');
           }
         } else {
           throw new Error('Tự động đăng nhập sau đăng ký thất bại');
         }
-      } else {
+      }
+      else {
         Swal.fire('Lỗi', response.message, 'error');
       }
     } catch (error) {
@@ -142,7 +147,15 @@ const SignupUser = () => {
               {formData.isOrganizer && (
                 <div className="mb-6">
                   <label className="block text-gray-600 font-medium mb-2">Số Tài Khoản</label>
-                  <input type="text" name="accountNumber" value={formData.accountNumber} onChange={handleChange} className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-900 outline-none" placeholder="Nhập số tài khoản của bạn" required />
+                  <input
+                    type="text"
+                    name="accountBank" // thay vì accountNumber
+                    value={formData.accountBank}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-900 outline-none"
+                    placeholder="Tạo mật khẩu"
+                    required
+                  />
                 </div>
               )}
 

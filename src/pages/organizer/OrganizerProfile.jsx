@@ -210,58 +210,6 @@ const OrganizerProfile = () => {
                                                 className={!isEditing ? 'border-none shadow-none bg-transparent p-0 text-lg font-semibold' : ''}
                                             />
                                         </Form.Item>
-
-                                        <Form.Item
-                                            label="Mô tả"
-                                            name="description"
-                                        >
-                                            <TextArea
-                                                rows={4}
-                                                placeholder="Mô tả về tổ chức của bạn..."
-                                                disabled={!isEditing}
-                                                className={!isEditing ? 'border-none shadow-none bg-transparent p-0 resize-none' : ''}
-                                            />
-                                        </Form.Item>
-                                    </div>
-                                </div>
-
-                                <Divider />
-
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    <div className="text-center p-4 bg-blue-50 rounded-lg">
-                                        <div className="text-2xl font-bold text-blue-600">
-                                            <Form.Item name="followers" className="mb-0">
-                                                <Input
-                                                    disabled={!isEditing}
-                                                    className={!isEditing ? 'border-none shadow-none bg-transparent text-center text-2xl font-bold text-blue-600 p-0' : 'text-center'}
-                                                />
-                                            </Form.Item>
-                                        </div>
-                                        <div className="text-gray-600">Người theo dõi</div>
-                                    </div>
-                                    <div className="text-center p-4 bg-green-50 rounded-lg">
-                                        <div className="text-2xl font-bold text-green-600">
-                                            <Form.Item name="experience" className="mb-0">
-                                                <Input
-                                                    disabled={!isEditing}
-                                                    className={!isEditing ? 'border-none shadow-none bg-transparent text-center text-2xl font-bold text-green-600 p-0' : 'text-center'}
-                                                    suffix={!isEditing ? " năm" : ""}
-                                                />
-                                            </Form.Item>
-                                        </div>
-                                        <div className="text-gray-600">Thâm niên</div>
-                                    </div>
-                                    <div className="text-center p-4 bg-orange-50 rounded-lg">
-                                        <div className="text-2xl font-bold text-orange-600">
-                                            <Form.Item name="workshops" className="mb-0">
-                                                <Input
-                                                    disabled={!isEditing}
-                                                    className={!isEditing ? 'border-none shadow-none bg-transparent text-center text-2xl font-bold text-orange-600 p-0' : 'text-center'}
-                                                    suffix={!isEditing ? "+ workshop đã tổ chức" : ""}
-                                                />
-                                            </Form.Item>
-                                        </div>
-                                        <div className="text-gray-600">Workshop</div>
                                     </div>
                                 </div>
 
@@ -290,67 +238,6 @@ const OrganizerProfile = () => {
                                             className={!isEditing ? 'border-none shadow-none bg-transparent p-0' : ''}
                                         />
                                     </Form.Item>
-
-                                    <Form.Item
-                                        label="Địa chỉ"
-                                        name="address"
-                                    >
-                                        <Input
-                                            placeholder="Nhập địa chỉ"
-                                            disabled={!isEditing}
-                                            className={!isEditing ? 'border-none shadow-none bg-transparent p-0' : ''}
-                                        />
-                                    </Form.Item>
-
-                                    <Form.Item
-                                        label="Website"
-                                        name="website"
-                                    >
-                                        <Input
-                                            placeholder="www.example.com"
-                                            disabled={!isEditing}
-                                            className={!isEditing ? 'border-none shadow-none bg-transparent p-0' : ''}
-                                        />
-                                    </Form.Item>
-                                </div>
-
-                                <Divider />
-
-                                <div>
-                                    <div className="mb-3 font-medium text-gray-700">Thể loại</div>
-                                    <div className="space-y-3">
-                                        <div className="flex flex-wrap gap-2">
-                                            {tags.map((tag, index) => (
-                                                <Tag
-                                                    key={index}
-                                                    closable={isEditing}
-                                                    onClose={() => handleRemoveTag(tag)}
-                                                    className="px-3 py-1 text-sm"
-                                                    color="blue"
-                                                >
-                                                    {tag}
-                                                </Tag>
-                                            ))}
-                                        </div>
-                                        {isEditing && (
-                                            <div className="flex gap-2">
-                                                <Input
-                                                    placeholder="Thêm thể loại mới (vd: #Yoga)"
-                                                    value={newTag}
-                                                    onChange={(e) => setNewTag(e.target.value)}
-                                                    onPressEnter={handleAddTag}
-                                                    className="flex-1"
-                                                />
-                                                <Button
-                                                    type="dashed"
-                                                    icon={<PlusOutlined />}
-                                                    onClick={handleAddTag}
-                                                >
-                                                    Thêm
-                                                </Button>
-                                            </div>
-                                        )}
-                                    </div>
                                 </div>
                             </Form>
                         </div>

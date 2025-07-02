@@ -129,14 +129,6 @@ const LoginUser = () => {
                 </div>
               </div>
 
-              <div className='flex justify-between mb-2'>
-                <div className="mb-6 flex items-center">
-                </div>
-                <a href="/resetpassword" className="text-sm text-blue-900 hover:underline">
-                  Bạn quên mật khẩu của mình?
-                </a>
-              </div>
-
               <button
                 type="submit"
                 className="w-full py-3 px-4 text-white font-bold rounded-lg shadow-md transition-colors duration-300 transform hover:scale-105"

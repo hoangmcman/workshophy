@@ -51,6 +51,8 @@ import CategoryList from './pages/admin/CategoryList';
 import CategoryCreate from './pages/admin/CategoryCreate';
 import CategoryEdit from './pages/admin/CategoryEdit';
 import AdminWorkshopDetail from './pages/admin/AdminWorkshopDetail';
+import Income from './pages/organizer/Income';
+import OrganizerPolicy from './pages/organizer/OrganizerPolicy';
 
 const RestrictedRoute = ({ element, allowedRoles }) => {
   const navigate = useNavigate();
@@ -112,6 +114,8 @@ const App = () => {
         <Route path='/organizerprofile' element={<ProtectedRoute element={<OrganizerProfile />} allowedRoles={['ORGANIZER']} />} />
         <Route path='/createworkshop' element={<ProtectedRoute element={<CreateWorkshop />} allowedRoles={['ORGANIZER']} />} />
         <Route path='/viewwsdetail/:workshopId' element={<ProtectedRoute element={<ViewWsDetail />} allowedRoles={['ORGANIZER']} />} />
+        <Route path='/income' element={<ProtectedRoute element={<Income />} allowedRoles={['ORGANIZER']} />} />
+        <Route path='/organizerpolicy' element={<ProtectedRoute element={<OrganizerPolicy />} allowedRoles={['ORGANIZER']} />} />
 
         {/* Admin Routes - Admin role only */}
         <Route path='/userlist' element={<ProtectedRoute element={<UserList />} allowedRoles={['ADMIN']} />} />
@@ -127,7 +131,7 @@ const App = () => {
         <Route path='/categorylist' element={<ProtectedRoute element={<CategoryList />} allowedRoles={['ADMIN']} />} />
         <Route path='/categorycreate' element={<ProtectedRoute element={<CategoryCreate />} allowedRoles={['ADMIN']} />} />
         <Route path='/categoryedit/:id' element={<ProtectedRoute element={<CategoryEdit />} allowedRoles={['ADMIN']} />} />
-        <Route path='/adminworkshopdetail/:workshopId' element={<ProtectedRoute element={<AdminWorkshopDetail />} allowedRoles={['ADMIN']} />} />
+        <Route path='/adminworkshopdetail/:userId' element={<ProtectedRoute element={<AdminWorkshopDetail />} allowedRoles={['ADMIN']} />} />
       </Routes>
     </BrowserRouter>
   );

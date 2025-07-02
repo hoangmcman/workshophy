@@ -9,20 +9,23 @@ import {
   ShopOutlined,
   TeamOutlined
 } from '@ant-design/icons';
-import AdminSidebar from '../../components/admin/AdminSidebar';
-import AdminHeader from '../../components/admin/AdminHeader';
+import OrganizerSidebar from '../../components/organizer/OrganizerSidebar';
+import OrganizerHeader from '../../components/organizer/OrganizerHeader';
 import ApiService from '../../service/ApiService';
 
 const { Title, Text } = Typography;
 
-const AdminWorkshopDetail = () => {
+const Income = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [bookingData, setBookingData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { userId } = useParams(); // Lấy userId từ URL params
+  const { userId: paramUserId } = useParams();
+  const userId = paramUserId || localStorage.getItem('userId');
 
   useEffect(() => {
-    fetchBookingDetails();
+    if (userId) {
+      fetchBookingDetails();
+    }
   }, [userId]);
 
   const fetchBookingDetails = async () => {
@@ -127,9 +130,9 @@ const AdminWorkshopDetail = () => {
   if (loading) {
     return (
       <div className="flex h-screen">
-        <AdminSidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+        <OrganizerSidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
         <div className="flex flex-col flex-1 overflow-hidden">
-          <AdminHeader />
+          <OrganizerHeader />
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
@@ -144,9 +147,9 @@ const AdminWorkshopDetail = () => {
   if (!bookingData) {
     return (
       <div className="flex h-screen">
-        <AdminSidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+        <OrganizerSidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
         <div className="flex flex-col flex-1 overflow-hidden">
-          <AdminHeader />
+          <OrganizerHeader />
           <div className="flex-1 flex items-center justify-center">
             <Text type="secondary">Không tìm thấy dữ liệu</Text>
           </div>
@@ -157,9 +160,9 @@ const AdminWorkshopDetail = () => {
 
   return (
     <div className="flex h-screen">
-      <AdminSidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+      <OrganizerSidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       <div className="flex flex-col flex-1 overflow-hidden">
-        <AdminHeader />
+        <OrganizerHeader />
 
         <div className="flex-1 overflow-y-auto p-6">
           <div className="max-w-7xl mx-auto">
@@ -183,6 +186,15 @@ const AdminWorkshopDetail = () => {
                         valueStyle={{ color: '#52c41a' }}
                         prefix={<DollarOutlined />}
                       />
+                      <div style={{ marginTop: 4 }}>
+                        <Text type="danger" style={{ fontSize: 12 }}>
+                          - Phí hoa hồng (3%): {formatCurrency(bookingData.totalAmount * 0.03)}
+                        </Text>
+                        <br />
+                        <Text strong style={{ fontSize: 13 }}>
+                          Thực nhận: {formatCurrency(bookingData.totalAmount * 0.97)}
+                        </Text>
+                      </div>
                     </Col>
                     <Col span={8}>
                       <Statistic
@@ -230,10 +242,21 @@ const AdminWorkshopDetail = () => {
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-2xl font-bold text-green-600">
-                          {formatCurrency(workshop.totalAmount)}
+                        <div>
+                          <Text type="secondary" style={{ fontSize: 14 }}>
+                            {formatCurrency(bookingData.totalAmount)}
+                          </Text>
+                          <div>
+                            <Text type="secondary" style={{ fontSize: 12 }}>Tổng doanh thu</Text>
+                          </div>
+                          <Text type="danger" style={{ fontSize: 12 }}>
+                            - Phí hoa hồng (3%): {formatCurrency(bookingData.totalAmount * 0.03)}
+                          </Text>
+                          <br />
+                          <span style={{ fontSize: 22, color: '#52c41a', fontWeight: 700 }}>
+                            Thực nhận: {formatCurrency(bookingData.totalAmount * 0.97)}
+                          </span>
                         </div>
-                        <Text type="secondary">Doanh thu workshop</Text>
                       </div>
                     </div>
                   }
@@ -298,4 +321,4 @@ const AdminWorkshopDetail = () => {
   );
 };
 
-export default AdminWorkshopDetail;
+export default Income;
