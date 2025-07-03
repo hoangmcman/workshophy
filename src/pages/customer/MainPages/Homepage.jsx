@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Calendar, Clock, MapPin, Users, Eye, ChevronLeft, ChevronRight, Target } from 'lucide-react';
 import CustomerHeader from '../../../components/customer/CustomerHeader';
 import CustomeFooter from '../../../components/customer/CustomeFooter';
@@ -14,6 +14,16 @@ const Homepage = () => {
   const [recommendedWorkshops, setRecommendedWorkshops] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
+  const featuredRef = useRef(null);
+
+  useEffect(() => {
+    if (location.state?.scrollTo === 'featured' && featuredRef.current) {
+      setTimeout(() => {
+        featuredRef.current.scrollIntoView({ behavior: 'smooth' });
+      }, 300); // delay để đảm bảo render xong
+    }
+  }, [location.state]);
 
   const carouselImages = [
     {
@@ -319,7 +329,7 @@ const Homepage = () => {
         </div>
       </section>
 
-      <section className="px-4 mb-8">
+      <section className="px-4 mb-8" ref={featuredRef}>
         <div className="max-w-7xl mx-auto">
           <div className="text-left mb-8">
             <h2 className="text-3xl font-bold text-black mb-4">Workshop Nổi Bật</h2>

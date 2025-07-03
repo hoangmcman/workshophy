@@ -912,34 +912,6 @@ export default class ApiService {
     }
 
     /**
-     * Send subscription email
-     * @param {Object} subscriptionData - Object containing subscription details
-     * @returns {Promise<Object>} Response object with status and message
-     */
-    static async sendSubscriptionEmail(subscriptionData) {
-        try {
-            const response = await axios.post(
-                `${this.BASE_URL}/api/v1/Mail/Subscription`,
-                subscriptionData,
-                { headers: this.getHeader() }
-            );
-
-            console.log("Subscription email response:", response.data);
-
-            return {
-                status: 200,
-                message: "Subscription email sent successfully"
-            };
-        } catch (error) {
-            console.error("Error sending subscription email:", error);
-            return {
-                status: error.response?.status || 400,
-                message: error.response?.data?.message || "Failed to send subscription email"
-            };
-        }
-    }
-
-    /**
      * Send OTP email
      * @param {Object} otpData - Object containing OTP details
      * @returns {Promise<Object>} Response object with status and message

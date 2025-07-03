@@ -115,35 +115,6 @@ const UserProfile = () => {
                 </div>
               </div>
             </div>
-
-            {/* Reviews Section */}
-            {/* <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                ĐÁNH GIÁ
-                <span className="text-sm text-gray-500 ml-2">Đánh giá gần đây</span>
-              </h2>
-              <div className="space-y-4">
-                {reviews.map((review) => (
-                  <div key={review.id} className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
-                    <img
-                      src={review.avatar}
-                      alt={review.name}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-medium text-gray-900">{review.name}</h4>
-                        <div className="flex items-center">
-                          <Star size={16} className="text-yellow-500 fill-current mr-1" />
-                          <span className="text-sm font-medium text-gray-900">{review.rating}</span>
-                        </div>
-                      </div>
-                      <p className="text-gray-600 text-sm">{review.comment}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div> */}
           </div>
 
           {/* Sidebar - Fixed user info card */}
@@ -161,11 +132,6 @@ const UserProfile = () => {
                   <Phone size={14} className="mr-1" />
                   <span>{user.phoneNumber || 'Không có thông tin'}</span>
                 </div>
-              </div>
-              <div className="mb-6">
-                <button className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg font-medium transition-colors">
-                  LIÊN HỆ NGAY
-                </button>
               </div>
             </div>
           </div>
