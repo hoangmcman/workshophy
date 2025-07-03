@@ -87,7 +87,8 @@ const Checkout = () => {
         await ApiService.sendTicketConfirmationEmail(emailPayload);
 
         message.success('Đặt vé thành công!');
-        window.location.href = bookingResponse.data.data;
+        console.log('Redirecting to:', bookingResponse.data.data);
+        window.location.href = bookingResponse.data.data; 
       } else {
         message.error(bookingResponse.message || 'Đặt vé thất bại.');
       }
