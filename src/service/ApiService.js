@@ -1179,8 +1179,8 @@ export default class ApiService {
         try {
             if (!workshopData.organizerId || !workshopData.title || !workshopData.description ||
                 !workshopData.categoryId || !workshopData.location || !workshopData.introVideoUrl ||
-                workshopData.durationMinutes === undefined || workshopData.price === undefined) {
-                throw new Error("organizerId, title, description, categoryId, location, introVideoUrl, durationMinutes, and price are required");
+                workshopData.price === undefined) {
+                throw new Error("organizerId, title, description, categoryId, location, introVideoUrl, and price are required");
             }
 
             console.log("Creating new workshop with data:", workshopData);
