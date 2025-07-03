@@ -71,7 +71,6 @@ const RequestDetail = () => {
                     categoryId: workshop.categoryId,
                     introVideoUrl: workshop.introVideoUrl,
                     submittedDate: dayjs.utc(workshop.createdAt).tz('Asia/Ho_Chi_Minh').format('DD/MM/YYYY'),
-                    durationMinutes: workshop.durationMinutes,
                     categoryName: categoryName,
                     organizerName: `${workshop.userInfo?.firstName || ''} ${workshop.userInfo?.lastName || ''}` || 'Unknown Organizer',
                     organizerEmail: workshop.userInfo?.email || 'N/A'

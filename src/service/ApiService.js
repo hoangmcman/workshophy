@@ -1172,7 +1172,7 @@ export default class ApiService {
 
     /**
      * Create a new workshop
-     * @param {Object} workshopData - The workshop data containing organizerId, title, description, categoryId, location, introVideoUrl, durationMinutes, price
+     * @param {Object} workshopData - The workshop data containing organizerId, title, description, categoryId, location, introVideoUrl, price
      * @returns {Promise<Object>} Response object with status and data/message
      */
     static async createWorkshop(workshopData) {
@@ -1210,7 +1210,7 @@ export default class ApiService {
     /**
      * Update a workshop
      * @param {string} workshopId - The ID of the workshop to update
-     * @param {Object} workshopData - The updated workshop data containing organizerId, title, description, categoryId, location, introVideoUrl, durationMinutes, price
+     * @param {Object} workshopData - The updated workshop data containing organizerId, title, description, categoryId, location, introVideoUrl, price
      * @returns {Promise<Object>} Response object with status and data/message
      */
     static async updateWorkshop(workshopId, workshopData) {
@@ -1220,8 +1220,8 @@ export default class ApiService {
             }
             if (!workshopData.organizerId || !workshopData.title || !workshopData.description ||
                 !workshopData.categoryId || !workshopData.location || !workshopData.introVideoUrl ||
-                workshopData.durationMinutes === undefined || workshopData.price === undefined) {
-                throw new Error("organizerId, title, description, categoryId, location, introVideoUrl, durationMinutes, and price are required");
+                workshopData.price === undefined) {
+                throw new Error("organizerId, title, description, categoryId, location, introVideoUrl, and price are required");
             }
 
             console.log("Updating workshop with id:", workshopId);

@@ -243,10 +243,6 @@ const Checkout = () => {
                             <span>{new Date(ws.createdAt).toLocaleDateString('vi-VN')}</span>
                           </div>
                           <div className="flex items-center text-sm text-gray-600">
-                            <Clock size={16} className="mr-2 text-gray-400" />
-                            <span>{ws.durationMinutes} phút</span>
-                          </div>
-                          <div className="flex items-center text-sm text-gray-600">
                             <MapPin size={16} className="mr-2 text-gray-400" />
                             <span className="line-clamp-1">{ws.location}</span>
                           </div>

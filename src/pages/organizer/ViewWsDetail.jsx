@@ -42,8 +42,7 @@ const ViewWsDetail = () => {
                         image: workshop.image || "https://images.stockcake.com/public/5/4/1/5417e74f-10cd-4be6-b128-85492eb59acc_large/creative-team-meeting-stockcake.jpg",
                         ticketTypes: workshop.ticketTypes || [
                             { name: "Vé Standard", price: workshop.price.toString() }
-                        ],
-                        durationMinutes: workshop.durationMinutes || 'N/A'
+                        ]
                     });
                 } else {
                     Swal.fire({

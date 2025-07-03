@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Calendar, Clock, MapPin, Users, Eye, ChevronLeft, ChevronRight, Target } from 'lucide-react';
+import { Calendar, MapPin, Users, Eye, ChevronLeft, ChevronRight, Target } from 'lucide-react';
 import CustomerHeader from '../../../components/customer/CustomerHeader';
 import CustomeFooter from '../../../components/customer/CustomeFooter';
 import ApiService from '../../../service/ApiService';
@@ -243,10 +243,6 @@ const Homepage = () => {
                         <span>{new Date(workshop.createdAt).toLocaleDateString('vi-VN')}</span>
                       </div>
                       <div className="flex items-center text-sm text-gray-600">
-                        <Clock size={16} className="mr-2 text-gray-400" />
-                        <span>{workshop.durationMinutes} phút</span>
-                      </div>
-                      <div className="flex items-center text-sm text-gray-600">
                         <MapPin size={16} className="mr-2 text-gray-400" />
                         <span className="line-clamp-1">{workshop.location}</span>
                       </div>
@@ -301,10 +297,6 @@ const Homepage = () => {
                       <div className="flex items-center text-sm text-gray-600">
                         <Calendar size={16} className="mr-2 text-gray-400" />
                         <span>{new Date(workshop.createdAt).toLocaleDateString('vi-VN')}</span>
-                      </div>
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Clock size={16} className="mr-2 text-gray-400" />
-                        <span>{workshop.durationMinutes} phút</span>
                       </div>
                       <div className="flex items-center text-sm text-gray-600">
                         <MapPin size={16} className="mr-2 text-gray-400" />
