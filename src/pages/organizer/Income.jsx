@@ -12,6 +12,7 @@ import {
 import OrganizerSidebar from '../../components/organizer/OrganizerSidebar';
 import OrganizerHeader from '../../components/organizer/OrganizerHeader';
 import ApiService from '../../service/ApiService';
+import LoadingScreen from '../utilities/LoadingScreen';
 
 const { Title, Text } = Typography;
 
@@ -128,20 +129,7 @@ const Income = () => {
   ];
 
   if (loading) {
-    return (
-      <div className="flex h-screen">
-        <OrganizerSidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-        <div className="flex flex-col flex-1 overflow-hidden">
-          <OrganizerHeader />
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <Text>Đang tải dữ liệu...</Text>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (!bookingData) {

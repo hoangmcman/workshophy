@@ -5,6 +5,7 @@ import CustomeFooter from '../../../components/customer/CustomeFooter';
 import ApiService from '../../../service/ApiService';
 import { Users, Calendar, Clock, MapPin, Eye } from 'lucide-react';
 import { message } from 'antd';
+import LoadingScreen from '../../utilities/LoadingScreen';
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -62,7 +63,8 @@ const Checkout = () => {
 
     const bookingData = {
       workshopId: workshop.workshopId,
-      quantity: quantity
+      quantity: quantity,
+      price: workshop.originalPrice * quantity
     };
 
     try {
@@ -88,7 +90,7 @@ const Checkout = () => {
 
         message.success('Đặt vé thành công!');
         console.log('Redirecting to:', bookingResponse.data.data);
-        window.location.href = bookingResponse.data.data; 
+        window.location.href = bookingResponse.data.data;
       } else {
         message.error(bookingResponse.message || 'Đặt vé thất bại.');
       }
@@ -100,11 +102,7 @@ const Checkout = () => {
 
 
   if (!workshop) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-600">Đang tải...</div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (

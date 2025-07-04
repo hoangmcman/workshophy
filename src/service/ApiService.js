@@ -1178,10 +1178,11 @@ export default class ApiService {
     static async createWorkshop(workshopData) {
         try {
             if (!workshopData.organizerId || !workshopData.title || !workshopData.description ||
-                !workshopData.categoryId || !workshopData.location || !workshopData.introVideoUrl ||
+                !workshopData.categoryId || !workshopData.location ||
                 workshopData.price === undefined) {
-                throw new Error("organizerId, title, description, categoryId, location, introVideoUrl, and price are required");
+                throw new Error("Hmmm... Có vẻ như bạn đã nhập sai một thông tin nào đó rồi. Hãy kiểm tra lại nhé!");
             }
+
 
             console.log("Creating new workshop with data:", workshopData);
 
@@ -1203,48 +1204,6 @@ export default class ApiService {
             return {
                 status: error.response?.status || 400,
                 message: error.response?.data?.message || error.message || "Failed to create workshop"
-            };
-        }
-    }
-
-    /**
-     * Update a workshop
-     * @param {string} workshopId - The ID of the workshop to update
-     * @param {Object} workshopData - The updated workshop data containing organizerId, title, description, categoryId, location, introVideoUrl, price
-     * @returns {Promise<Object>} Response object with status and data/message
-     */
-    static async updateWorkshop(workshopId, workshopData) {
-        try {
-            if (!workshopId) {
-                throw new Error("Workshop ID is required for update");
-            }
-            if (!workshopData.organizerId || !workshopData.title || !workshopData.description ||
-                !workshopData.categoryId || !workshopData.location || !workshopData.introVideoUrl ||
-                workshopData.price === undefined) {
-                throw new Error("organizerId, title, description, categoryId, location, introVideoUrl, and price are required");
-            }
-
-            console.log("Updating workshop with id:", workshopId);
-            console.log("Update data:", workshopData);
-
-            const response = await axios.put(
-                `${this.BASE_URL}/api/v1/Workshop`,
-                { workshopId, ...workshopData },
-                { headers: this.getHeader() }
-            );
-
-            console.log("Update workshop response:", response.data);
-
-            return {
-                status: 200,
-                data: response.data,
-                message: "Workshop updated successfully"
-            };
-        } catch (error) {
-            console.error("Error updating workshop:", error);
-            return {
-                status: error.response?.status || 400,
-                message: error.response?.data?.message || error.message || "Failed to update workshop"
             };
         }
     }
@@ -1474,7 +1433,7 @@ export default class ApiService {
      */
     static async createBooking(bookingData) {
         try {
-            if (!bookingData.workshopId || !bookingData.quantity) {
+            if (!bookingData.workshopId || !bookingData.quantity || !bookingData.price) {
                 throw new Error("Workshop ID and quantity are required");
             }
 

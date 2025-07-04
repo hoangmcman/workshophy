@@ -86,14 +86,7 @@ const BlogDetailUser = () => {
   }
 
   if (!selectedBlog) {
-    return (
-      <div className="min-h-screen bg-[#FFF8ED] flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#091238] mx-auto"></div>
-          <p className="mt-4 text-gray-600">Đang tải bài viết...</p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (

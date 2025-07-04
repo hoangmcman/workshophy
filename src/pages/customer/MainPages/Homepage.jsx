@@ -5,6 +5,7 @@ import CustomerHeader from '../../../components/customer/CustomerHeader';
 import CustomeFooter from '../../../components/customer/CustomeFooter';
 import ApiService from '../../../service/ApiService';
 import { message } from 'antd';
+import LoadingScreen from '../../utilities/LoadingScreen';
 
 const Homepage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -114,11 +115,7 @@ const Homepage = () => {
     .slice(0, 4);
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-600">Đang tải...</div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (

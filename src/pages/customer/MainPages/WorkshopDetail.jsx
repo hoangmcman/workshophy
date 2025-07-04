@@ -142,7 +142,15 @@ const WorkshopDetail = () => {
         }
     };
 
-    if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="text-gray-600">Đang tải...</div></div>;
+    const extractYouTubeId = (url) => {
+        const regExp = /(?:youtube\.com.*(?:\?v=|\/embed\/)|youtu\.be\/)([^&?/]+)/;
+        const match = url.match(regExp);
+        return match && match[1] ? match[1] : null;
+    };
+
+    if (loading) {
+        return <LoadingScreen />;
+    }
     if (!workshop) return <div className="min-h-screen flex items-center justify-center"><div className="text-gray-600">Không thể tải thông tin workshop.</div></div>;
 
     return (
@@ -179,12 +187,21 @@ const WorkshopDetail = () => {
                                         <p className="font-medium text-gray-900">Địa điểm</p>
                                         <p className="text-gray-600">{workshop.location}</p>
                                     </div>
-                                </div>                             
+                                </div>
                                 <div className="flex items-start">
                                     <Users size={20} className="text-gray-400 mr-3 mt-1" />
                                     <div>
                                         <p className="font-medium text-gray-900">Người tổ chức</p>
                                         <p className="text-gray-600">{workshop.organizer}</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start">
+                                    <Calendar size={20} className="text-gray-400 mr-3 mt-1" />
+                                    <div>
+                                        <p className="font-medium text-gray-900">Lịch chi tiết</p>
+                                        <p className="text-gray-600">
+                                            {dayjs.utc(workshop.startTime).tz('Asia/Ho_Chi_Minh').format('dddd, D MMMM YYYY, HH:mm')} - {dayjs.utc(workshop.endTime).tz('Asia/Ho_Chi_Minh').format('HH:mm')}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -194,13 +211,14 @@ const WorkshopDetail = () => {
                             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
                                 <h2 className="text-xl font-semibold text-gray-900 mb-4">VIDEO GIỚI THIỆU</h2>
                                 <div className="relative" style={{ paddingBottom: '56.25%' }}>
-                                    <video
-                                        className="absolute top-0 left-0 w-full h-full rounded-lg"
-                                        controls
-                                        src={workshop.introVideoUrl}
-                                    >
-                                        Trình duyệt của bạn không hỗ trợ video.
-                                    </video>
+                                    <iframe
+                                        className="w-full h-64 md:h-96 rounded-lg"
+                                        src={`https://www.youtube.com/embed/${extractYouTubeId(workshop.introVideoUrl)}`}
+                                        frameBorder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                    />
+
                                 </div>
                             </div>
                         )}
@@ -209,28 +227,6 @@ const WorkshopDetail = () => {
                             <h2 className="text-xl font-semibold text-gray-900 mb-4">MÔ TẢ</h2>
                             <div className="text-gray-600 whitespace-pre-line">
                                 {workshop.description}
-                            </div>
-                        </div>
-
-                        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-                            <h3 className="text-xl font-semibold text-gray-900 mb-4">LỊCH CHI TIẾT</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div className="text-center">
-                                    <div className="bg-[#091238] text-white rounded-lg p-4">
-                                        <div className="text-sm opacity-80 mb-1">
-                                            {dayjs.utc(workshop.startTime).tz('Asia/Ho_Chi_Minh').format('dddd')}
-                                        </div>
-                                        <div className="text-xs opacity-60 mb-2">
-                                            {dayjs.utc(workshop.startTime).tz('Asia/Ho_Chi_Minh').format('MMMM')}
-                                        </div>
-                                        <div className="text-2xl font-bold mb-2">
-                                            {dayjs.utc(workshop.startTime).tz('Asia/Ho_Chi_Minh').format('D')}
-                                        </div>
-                                        <div className="text-xs opacity-80">
-                                            {dayjs.utc(workshop.startTime).tz('Asia/Ho_Chi_Minh').format('HH:mm')} - {dayjs.utc(workshop.endTime).tz('Asia/Ho_Chi_Minh').format('HH:mm')}
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
@@ -326,52 +322,56 @@ const WorkshopDetail = () => {
 
                 <div className="mt-12">
                     <h2 className="text-2xl font-bold text-gray-900 mb-8">WORKSHOP BẠN CÓ THỂ THÍCH</h2>
-                    <p className="text-gray-600 mb-6">Dựa trên thể loại workshop bạn đang xem</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {similarWorkshops.map((workshop) => (
-                            <div key={workshop.workshopId} className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden">
-                                <div className="relative">
-                                    <img
-                                        src={workshop.image || 'https://thienanagency.com/photos/all/khac/workshop-painting.jpg'}
-                                        alt={workshop.name}
-                                        className="w-full h-48 object-cover"
-                                    />
-                                </div>
-                                <div className="p-6">
-                                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                                        {workshop.title}
-                                    </h3>
-                                    <p className="text-gray-600 text-sm mb-4">
-                                        {workshop.description}
-                                    </p>
-                                    <div className="space-y-2 mb-4">
-                                        <div className="flex items-center text-sm text-gray-600">
-                                            <Calendar size={16} className="mr-2 text-gray-700" />
-                                            <span>{new Date(workshop.createdAt).toLocaleDateString('vi-VN')}</span>
-                                        </div>
-                                        <div className="flex items-center text-sm text-gray-600">
-                                            <MapPin size={16} className="mr-2 text-gray-700" />
-                                            <span className="line-clamp-1">{workshop.location}</span>
-                                        </div>
+                        {similarWorkshops.map((workshop) => {
+                            const shortDesc = workshop.description
+                                ? workshop.description.split(' ').slice(0, 15).join(' ') + (workshop.description.split(' ').length > 15 ? '...' : '')
+                                : '';
+                            return (
+                                <div key={workshop.workshopId} className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden">
+                                    <div className="relative">
+                                        <img
+                                            src={workshop.image || 'https://thienanagency.com/photos/all/khac/workshop-painting.jpg'}
+                                            alt={workshop.name}
+                                            className="w-full h-48 object-cover"
+                                        />
                                     </div>
-                                    <div className="mb-4">
-                                        <div className="flex items-center space-x-2">
-                                            <span className="text-lg font-bold text-[#091238]">{workshop.price.toLocaleString('vi-VN')} VNĐ</span>
-                                            {workshop.originalPrice && (
-                                                <span className="text-sm text-gray-500 line-through">{workshop.originalPrice}</span>
-                                            )}
+                                    <div className="p-6">
+                                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                                            {workshop.title}
+                                        </h3>
+                                        <p className="text-gray-600 text-sm mb-4">
+                                            {shortDesc}
+                                        </p>
+                                        <div className="space-y-2 mb-4">
+                                            <div className="flex items-center text-sm text-gray-600">
+                                                <Calendar size={16} className="mr-2 text-gray-700" />
+                                                <span>{new Date(workshop.createdAt).toLocaleDateString('vi-VN')}</span>
+                                            </div>
+                                            <div className="flex items-center text-sm text-gray-600">
+                                                <MapPin size={16} className="mr-2 text-gray-700" />
+                                                <span className="line-clamp-1">{workshop.location}</span>
+                                            </div>
                                         </div>
+                                        <div className="mb-4">
+                                            <div className="flex items-center space-x-2">
+                                                <span className="text-lg font-bold text-[#091238]">{workshop.price.toLocaleString('vi-VN')} VNĐ</span>
+                                                {workshop.originalPrice && (
+                                                    <span className="text-sm text-gray-500 line-through">{workshop.originalPrice}</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <Link
+                                            to={`/workshopdetail/${workshop.workshopId}`}
+                                            className="w-full bg-[#091238] hover:bg-opacity-90 text-white py-3 px-4 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 no-underline"
+                                        >
+                                            <Eye size={16} />
+                                            Xem chi tiết
+                                        </Link>
                                     </div>
-                                    <Link
-                                        to={`/workshopdetail/${workshop.workshopId}`}
-                                        className="w-full bg-[#091238] hover:bg-opacity-90 text-white py-3 px-4 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 no-underline"
-                                    >
-                                        <Eye size={16} />
-                                        Xem chi tiết
-                                    </Link>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
             </div>

@@ -4,6 +4,7 @@ import { UserOutlined, EditOutlined, SaveOutlined, UploadOutlined, PlusOutlined 
 import OrganizerSidebar from '../../components/organizer/OrganizerSidebar';
 import OrganizerHeader from '../../components/organizer/OrganizerHeader';
 import ApiService from '../../service/ApiService';
+import LoadingScreen from '../utilities/LoadingScreen';
 
 const { TextArea } = Input;
 
@@ -115,7 +116,7 @@ const OrganizerProfile = () => {
     };
 
     if (loading) {
-        return <div>Đang tải thông tin...</div>;
+        return <LoadingScreen />;
     }
 
     if (!userData) {

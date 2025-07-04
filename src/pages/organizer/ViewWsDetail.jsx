@@ -8,6 +8,7 @@ import ApiService from '../../service/ApiService';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import LoadingScreen from '../utilities/LoadingScreen';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -68,7 +69,7 @@ const ViewWsDetail = () => {
     };
 
     if (!workshopData) {
-        return <div className="flex justify-center items-center h-screen">Đang tải...</div>;
+        return <LoadingScreen />;
     }
 
     return (
