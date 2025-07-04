@@ -75,9 +75,9 @@ const Checkout = () => {
         bookingResponse.data?.success &&
         typeof bookingResponse.data.data === 'string'
       ) {
-        // Gửi email xác nhận vé
+        // Gửi email xác nhận (trường hợp bạn vẫn muốn gửi cả lúc này)
         const emailPayload = {
-          email: localStorage.getItem("userEmail"), // đảm bảo đã có email ở localStorage
+          email: localStorage.getItem("userEmail"),
           title: workshop.title,
           date: workshop.date,
           time: workshop.time,
@@ -88,10 +88,14 @@ const Checkout = () => {
 
         await ApiService.sendTicketConfirmationEmail(emailPayload);
 
+        // ✅ Lưu thêm quantity để sau này gửi lại email từ trang /payment/success
+        localStorage.setItem('ticketQuantity', quantity.toString());
+
         message.success('Đặt vé thành công!');
         console.log('Redirecting to:', bookingResponse.data.data);
         window.location.href = bookingResponse.data.data;
-      } else {
+      }
+      else {
         message.error(bookingResponse.message || 'Đặt vé thất bại.');
       }
     } catch (error) {
