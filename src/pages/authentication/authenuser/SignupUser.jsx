@@ -146,14 +146,14 @@ const SignupUser = () => {
 
               {formData.isOrganizer && (
                 <div className="mb-6">
-                  <label className="block text-gray-600 font-medium mb-2">Số Tài Khoản</label>
+                  <label className="block text-gray-600 font-medium mb-2">Số Tài Khoản và Tên Ngân Hàng</label>
                   <input
                     type="text"
-                    name="accountBank" // thay vì accountNumber
+                    name="accountBank"
                     value={formData.accountBank}
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-900 outline-none"
-                    placeholder="Tạo mật khẩu"
+                    placeholder="Ví dụ: 123456789 - Ngân hàng ABC"
                     required
                   />
                 </div>

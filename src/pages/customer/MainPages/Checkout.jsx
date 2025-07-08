@@ -64,7 +64,7 @@ const Checkout = () => {
     const bookingData = {
       workshopId: workshop.workshopId,
       quantity: quantity,
-      price: workshop.originalPrice * quantity
+      price: workshop.originalPrice // Gửi đơn giá thay vì tổng
     };
 
     try {
@@ -185,7 +185,7 @@ const Checkout = () => {
 
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Giá gốc:</span>
+                    <span className="text-gray-600">Giá gốc mỗi vé:</span>
                     <span className="text-gray-400">{workshop.originalPrice.toLocaleString('vi-VN')}đ</span>
                   </div>
                   <div className="flex justify-between items-center">
@@ -197,7 +197,7 @@ const Checkout = () => {
                 <div className="border-t border-gray-200 pt-4 mb-6">
                   <div className="flex justify-between items-center">
                     <span className="text-xl font-bold text-[#091238]">Tổng cộng:</span>
-                    <span className="text-2xl font-bold text-[#091238]">{total.toLocaleString('vi-VN')}đ</span>
+                    <span className="text-2xl font-bold text-[#091238]">{(workshop.originalPrice * quantity).toLocaleString('vi-VN')}đ</span>
                   </div>
                 </div>
 

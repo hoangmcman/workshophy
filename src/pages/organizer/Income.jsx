@@ -230,35 +230,29 @@ const Income = () => {
                         </div>
                       </div>
                       <div className="text-right">
-                        <div>
-                          <Text type="secondary" style={{ fontSize: 14 }}>
-                            {formatCurrency(bookingData.totalAmount)}
-                          </Text>
-                          <div>
-                            <Text type="secondary" style={{ fontSize: 12 }}>Tổng doanh thu</Text>
-                          </div>
-                          <Text type="danger" style={{ fontSize: 12 }}>
-                            - Phí hoa hồng (3%): {formatCurrency(bookingData.totalAmount * 0.03)}
-                          </Text>
-                          <br />
-                          <span style={{ fontSize: 22, color: '#52c41a', fontWeight: 700 }}>
-                            Thực nhận: {formatCurrency(bookingData.totalAmount * 0.97)}
-                          </span>
-                        </div>
+                        {(() => {
+                          const totalAmount = workshop.bookings.reduce((sum, booking) => sum + (booking.totalPrice || 0), 0);
+                          const fee = totalAmount * 0.03;
+                          const netAmount = totalAmount - fee;
+                          return (
+                            <div>
+                              <Text type="secondary" style={{ fontSize: 14 }}>
+                                {formatCurrency(totalAmount)}
+                              </Text>
+                              <div>
+                                <Text type="secondary" style={{ fontSize: 12 }}>Tổng doanh thu</Text>
+                              </div>
+                              <Text type="danger" style={{ fontSize: 12 }}>
+                                - Phí hoa hồng (3%): {formatCurrency(fee)}
+                              </Text>
+                              <br />
+                              <span style={{ fontSize: 22, color: '#52c41a', fontWeight: 700 }}>
+                                Thực nhận: {formatCurrency(netAmount)}
+                              </span>
+                            </div>
+                          );
+                        })()}
                       </div>
-                    </div>
-                  }
-                  extra={
-                    <div className="flex items-center space-x-4">
-                      <div className="text-center">
-                        <div className="text-lg font-semibold text-blue-600">
-                          {workshop.bookings.length}
-                        </div>
-                        <Text type="secondary" className="text-xs">Booking</Text>
-                      </div>
-                      <Tag color="blue" className="px-3 py-1">
-                        Workshop #{index + 1}
-                      </Tag>
                     </div>
                   }
                 >
