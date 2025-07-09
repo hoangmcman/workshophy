@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Calendar, MapPin, Users, Eye, ChevronLeft, ChevronRight, Target } from 'lucide-react';
+import { Calendar, MapPin, Eye, ChevronLeft, ChevronRight, Target } from 'lucide-react';
+import { motion } from 'framer-motion';
 import CustomerHeader from '../../../components/customer/CustomerHeader';
 import CustomeFooter from '../../../components/customer/CustomeFooter';
 import ApiService from '../../../service/ApiService';
@@ -22,7 +23,7 @@ const Homepage = () => {
     if (location.state?.scrollTo === 'featured' && featuredRef.current) {
       setTimeout(() => {
         featuredRef.current.scrollIntoView({ behavior: 'smooth' });
-      }, 300); // delay để đảm bảo render xong
+      }, 300);
     }
   }, [location.state]);
 
@@ -114,6 +115,15 @@ const Homepage = () => {
     .sort((a, b) => (b.participants || 0) - (a.participants || 0))
     .slice(0, 4);
 
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } }
+  };
+
+  const buttonVariants = {
+    hover: { scale: 1.05, transition: { duration: 0.2 } }
+  };
+
   if (loading) {
     return <LoadingScreen />;
   }
@@ -122,7 +132,13 @@ const Homepage = () => {
     <div className="min-h-screen">
       <CustomerHeader />
 
-      <section className="py-8 px-4">
+      <motion.section
+        className="py-8 px-4"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={sectionVariants}
+      >
         <div className="relative w-full max-w-7xl mx-auto h-80 md:h-96 overflow-hidden rounded-xl shadow-lg">
           {carouselImages.map((slide, index) => (
             <div
@@ -145,57 +161,74 @@ const Homepage = () => {
                     <h1 className="text-2xl md:text-4xl font-bold mb-6 leading-tight">
                       {slide.subtitle}
                     </h1>
-                    <button className="bg-white text-gray-800 px-6 py-3 rounded-full font-medium hover:bg-gray-100 transition-colors">
+                    <motion.button
+                      className="bg-white text-gray-800 px-6 py-3 rounded-full font-medium hover:bg-gray-100 transition-colors cursor-custom"
+                      variants={buttonVariants}
+                      whileHover="hover"
+                    >
                       {slide.buttonText}
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
               </div>
             </div>
           ))}
 
-          <button
+          <motion.button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-800 p-3 rounded-full transition-all shadow-lg z-10"
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-800 p-3 rounded-full transition-all shadow-lg z-10 cursor-custom"
+            variants={buttonVariants}
+            whileHover="hover"
           >
             <ChevronLeft size={24} />
-          </button>
-          <button
+          </motion.button>
+          <motion.button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-800 p-3 rounded-full transition-all shadow-lg z-10"
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-800 p-3 rounded-full transition-all shadow-lg z-10 cursor-custom"
+            variants={buttonVariants}
+            whileHover="hover"
           >
             <ChevronRight size={24} />
-          </button>
+          </motion.button>
 
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
             {carouselImages.map((_, index) => (
-              <button
+              <motion.button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
-                className={`w-3 h-3 rounded-full transition-all ${index === currentSlide ? 'bg-white' : 'bg-white bg-opacity-50'
-                  }`}
+                className={`w-3 h-3 rounded-full transition-all cursor-custom ${index === currentSlide ? 'bg-white' : 'bg-white bg-opacity-50'}`}
+                variants={buttonVariants}
+                whileHover="hover"
               />
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
 
-      <section className="py-2 px-4">
+      <motion.section
+        className="py-2 px-4"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={sectionVariants}
+      >
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-wrap justify-center gap-4 mb-4">
             {categories.map((category) => {
               const Icon = category.icon || Target;
               return (
                 <div key={category.id} className="flex flex-col items-center">
-                  <button
+                  <motion.button
                     onClick={() => setSelectedCategory(category.id)}
-                    className={`flex items-center justify-center w-16 h-16 rounded-full transition-all ${selectedCategory === category.id
+                    className={`flex items-center justify-center w-16 h-16 rounded-full transition-all cursor-custom ${selectedCategory === category.id
                         ? 'bg-[#091238] text-white shadow-lg'
                         : 'bg-[#091238] bg-opacity-10 text-white hover:bg-opacity-20'
                       }`}
+                    variants={buttonVariants}
+                    whileHover="hover"
                   >
                     <Icon size={24} />
-                  </button>
+                  </motion.button>
                   <span className="mt-2 text-sm text-black text-center">
                     {category.name}
                   </span>
@@ -204,9 +237,15 @@ const Homepage = () => {
             })}
           </div>
         </div>
-      </section>
+      </motion.section>
 
-      <section className="py-8 px-4 bg-amber-100">
+      <motion.section
+        className="py-8 px-4 bg-amber-100"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={sectionVariants}
+      >
         <div className="max-w-7xl mx-auto">
           <div className="text-left mb-8">
             <h2 className="text-3xl font-bold text-black mb-4">Top Trending Workshop</h2>
@@ -219,7 +258,14 @@ const Homepage = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {topTrendingWorkshops.map((workshop) => (
-                <div key={workshop.workshopId} className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden">
+                <motion.div
+                  key={workshop.workshopId}
+                  className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  variants={sectionVariants}
+                >
                   <div className="relative">
                     <img
                       src={workshop.image || 'https://thienanagency.com/photos/all/khac/workshop-painting.jpg'}
@@ -249,20 +295,26 @@ const Homepage = () => {
                     </div>
                     <Link
                       to={`/workshopdetail/${workshop.workshopId}`}
-                      className="w-full bg-[#091238] hover:bg-opacity-90 text-white py-3 px-4 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 no-underline"
+                      className="w-full bg-[#091238] hover:bg-opacity-90 text-white py-3 px-4 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 no-underline cursor-custom"
                     >
                       <Eye size={16} />
                       Xem chi tiết
                     </Link>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           )}
         </div>
-      </section>
+      </motion.section>
 
-      <section className="py-8 px-4 bg-[#F5F2EA]">
+      <motion.section
+        className="py-8 px-4 bg-[#F5F2EA]"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={sectionVariants}
+      >
         <div className="max-w-7xl mx-auto">
           <div className="text-left mb-8">
             <h2 className="text-3xl font-bold text-black mb-4">Workshop Theo Sở Thích</h2>
@@ -275,7 +327,14 @@ const Homepage = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {recommendedWorkshops.map((workshop) => (
-                <div key={workshop.workshopId} className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden">
+                <motion.div
+                  key={workshop.workshopId}
+                  className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  variants={sectionVariants}
+                >
                   <div className="relative">
                     <img
                       src={workshop.image || 'https://thienanagency.com/photos/all/khac/workshop-painting.jpg'}
@@ -305,20 +364,27 @@ const Homepage = () => {
                     </div>
                     <Link
                       to={`/workshopdetail/${workshop.workshopId}`}
-                      className="w-full bg-[#091238] hover:bg-opacity-90 text-white py-3 px-4 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 no-underline"
+                      className="w-full bg-[#091238] hover:bg-opacity-90 text-white py-3 px-4 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 no-underline cursor-custom"
                     >
                       <Eye size={16} />
                       Xem chi tiết
                     </Link>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           )}
         </div>
-      </section>
+      </motion.section>
 
-      <section className="px-4 mb-8" ref={featuredRef}>
+      <motion.section
+        className="px-4 mb-8"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={sectionVariants}
+        ref={featuredRef}
+      >
         <div className="max-w-7xl mx-auto">
           <div className="text-left mb-8">
             <h2 className="text-3xl font-bold text-black mb-4">Workshop Nổi Bật</h2>
@@ -331,7 +397,14 @@ const Homepage = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {filteredWorkshops.map((workshop) => (
-                <div key={workshop.workshopId} className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden">
+                <motion.div
+                  key={workshop.workshopId}
+                  className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  variants={sectionVariants}
+                >
                   <div className="relative">
                     <img
                       src={workshop.image || 'https://thienanagency.com/photos/all/khac/workshop-painting.jpg'}
@@ -350,27 +423,33 @@ const Homepage = () => {
                       <div className="flex items-center text-sm text-gray-600">
                         <Calendar size={16} className="mr-2 text-gray-400" />
                         <span>{new Date(workshop.createdAt).toLocaleDateString('vi-VN')}</span>
-                      </div>                    
+                      </div>
                     </div>
                     <div className="mb-4">
                       <span className="text-lg font-bold text-[#091238]">{workshop.price.toLocaleString('vi-VN')} VNĐ</span>
                     </div>
                     <Link
                       to={`/workshopdetail/${workshop.workshopId}`}
-                      className="w-full bg-[#091238] hover:bg-opacity-90 text-white py-3 px-4 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 no-underline"
+                      className="w-full bg-[#091238] hover:bg-opacity-90 text-white py-3 px-4 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 no-underline cursor-custom"
                     >
                       <Eye size={16} />
                       Xem chi tiết
                     </Link>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           )}
         </div>
-      </section>
+      </motion.section>
 
-      <section className="py-8 px-4 bg-[#F5F2EA]">
+      <motion.section
+        className="py-8 px-4 bg-[#F5F2EA]"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={sectionVariants}
+      >
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="flex flex-col justify-center items-center text-center">
@@ -380,7 +459,7 @@ const Homepage = () => {
               </p>
               <Link
                 to="/faq"
-                className="bg-[#091238] hover:bg-opacity-90 text-white py-3 px-6 w-32 rounded-lg font-medium transition-colors text-center"
+                className="bg-[#091238] hover:bg-opacity-90 text-white py-3 px-6 w-32 rounded-lg font-medium transition-colors text-center cursor-custom"
               >
                 FAQs
               </Link>
@@ -394,9 +473,15 @@ const Homepage = () => {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
-      <section className="py-8 px-4 bg-[#A9C1A6]">
+      <motion.section
+        className="py-8 px-4 bg-[#A9C1A6]"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={sectionVariants}
+      >
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="relative">
@@ -413,14 +498,14 @@ const Homepage = () => {
               </p>
               <Link
                 to="/aboutus"
-                className="bg-[#091238] hover:bg-opacity-90 text-white py-3 px-6 rounded-lg font-medium transition-colors text-center"
+                className="bg-[#091238] hover:bg-opacity-90 text-white py-3 px-6 rounded-lg font-medium transition-colors text-center cursor-custom"
               >
                 Xem chi tiết
               </Link>
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       <CustomeFooter />
     </div>
