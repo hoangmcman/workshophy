@@ -3,6 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import CustomerHeader from '../../../components/customer/CustomerHeader';
 import CustomeFooter from '../../../components/customer/CustomeFooter';
 import ApiService from '../../../service/ApiService';
+import { motion } from 'framer-motion';
+import LoadingScreen from '../../utilities/LoadingScreen';
 
 const BlogDetailUser = () => {
   const { id } = useParams(); // Get blogPostId from URL
@@ -67,6 +69,15 @@ const BlogDetailUser = () => {
         break;
       default:
         break;
+    }
+  };
+
+  const cardVariants = {
+    hover: { 
+      scale: 1.05, 
+      y: -10, 
+      transition: { duration: 0.2 },
+      boxShadow: "0 10px 20px rgba(0,0,0,0.2)"
     }
   };
 
@@ -179,9 +190,11 @@ const BlogDetailUser = () => {
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Bài viết liên quan</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {relatedBlogs.map((blog) => (
-                  <div
+                  <motion.div
                     key={blog.blogPostId}
                     className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300"
+                    whileHover="hover"
+                    variants={cardVariants}
                   >
                     <Link to={`/blog/${blog.blogPostId}`}>
                       <img
@@ -200,7 +213,7 @@ const BlogDetailUser = () => {
                         <p className="text-sm text-gray-500">{blog.date}</p>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>

@@ -81,7 +81,16 @@ const CreateWorkshop = () => {
     const validateStep = () => {
         const newErrors = {};
         if (currentStep === 1) {
-            if (!formData.title.trim()) newErrors.title = 'Tên workshop là bắt buộc';
+            if (!formData.title.trim()) {
+                newErrors.title = 'Tên workshop là bắt buộc';
+            } else {
+                const wordCount = formData.title.trim().split(/\s+/).length;
+                if (wordCount < 5) {
+                    newErrors.title = 'Tên workshop phải có ít nhất 5 từ';
+                } else if (wordCount > 9) {
+                    newErrors.title = 'Tên workshop không được dài quá 9 từ';
+                }
+            }
             if (!formData.description.trim()) newErrors.description = 'Mô tả là bắt buộc';
             if (!formData.categoryId) newErrors.categoryId = 'Danh mục là bắt buộc';
             if (!formData.location.trim()) newErrors.location = 'Địa điểm là bắt buộc';
@@ -191,7 +200,7 @@ const CreateWorkshop = () => {
                                 value={formData.title}
                                 onChange={handleInputChange}
                                 className="w-full px-4 py-3 bg-gray-200 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Nhập tên workshop"
+                                placeholder="Nhập tên workshop (5-9 từ)"
                             />
                             {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
                         </div>
@@ -335,7 +344,7 @@ const CreateWorkshop = () => {
                             <button
                                 onClick={handlePrevious}
                                 disabled={currentStep === 1}
-                                className={`px-6 py-2 rounded-lg font-medium ${currentStep === 1 ? 'bg-gray-600 text-gray-400 cursor-not-allowed' : 'bg-gray-700 text-white hover:bg-gray-600'}`}
+                                className={`px-6 py-2 rounded-lg font-medium ${currentStep === 1 ? 'bg-gray-600 text-gray-400 cursor-not-allowed' : 'bg-gray-600 text-white hover:bg-gray-500'}`}
                             >
                                 Quay lại
                             </button>

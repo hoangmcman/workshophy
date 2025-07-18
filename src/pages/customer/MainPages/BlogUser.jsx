@@ -4,6 +4,7 @@ import CustomerHeader from '../../../components/customer/CustomerHeader';
 import CustomeFooter from '../../../components/customer/CustomeFooter';
 import ApiService from '../../../service/ApiService';
 import { Calendar, Eye } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const BlogUser = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -77,6 +78,15 @@ const BlogUser = () => {
     setCurrentPage(1);
   };
 
+  const cardVariants = {
+    hover: { 
+      scale: 1.05, 
+      y: -10, 
+      transition: { duration: 0.2 },
+      boxShadow: "0 10px 20px rgba(0,0,0,0.2)"
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#FFF8ED]">
       <CustomerHeader />
@@ -125,7 +135,12 @@ const BlogUser = () => {
             {currentBlogs.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {currentBlogs.map((blog) => (
-                  <div key={blog.blogPostId} className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden">
+                  <motion.div
+                    key={blog.blogPostId}
+                    className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
+                    whileHover="hover"
+                    variants={cardVariants}
+                  >
                     <div className="relative">
                       <img
                         src={blog.image}
@@ -154,7 +169,7 @@ const BlogUser = () => {
                         Xem chi tiết
                       </Link>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             ) : (

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { Calendar, Clock, MapPin, Users, Eye, Star } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, Eye, Star, Edit, Trash } from 'lucide-react';
 import CustomerHeader from '../../../components/customer/CustomerHeader';
 import CustomeFooter from '../../../components/customer/CustomeFooter';
 import ApiService from '../../../service/ApiService';
@@ -24,6 +24,7 @@ const WorkshopDetail = () => {
     const [similarWorkshops, setSimilarWorkshops] = useState([]);
     const [newReview, setNewReview] = useState({ rating: 0, comment: '' });
     const [userCanReview, setUserCanReview] = useState(false);
+    const [showAllReviews, setShowAllReviews] = useState(false);
     const userId = localStorage.getItem('userId');
 
     const mapStatusToDisplay = (status) => {
@@ -54,6 +55,7 @@ const WorkshopDetail = () => {
                 };
                 setWorkshop(mappedWorkshop);
 
+                // Check user can review
                 const ticketsResponse = await ApiService.getWorkshopTickets();
                 if (ticketsResponse.status === 200 && ticketsResponse.data) {
                     const userTickets = ticketsResponse.data.data.items.filter(
@@ -62,11 +64,18 @@ const WorkshopDetail = () => {
                     setUserCanReview(userTickets.length > 0);
                 }
 
-                const reviewsResponse = await ApiService.getAllReviews({ workshopId });
+                // ✅ Fetch Reviews
+                const reviewsResponse = await ApiService.getAllReviews({
+                    Page: 1,
+                    PageSize: 10,
+                    workshopId: workshopId
+                });
                 if (reviewsResponse.status === 200 && reviewsResponse.data) {
+                    console.log("Fetched reviews:", reviewsResponse.data.data.items);
                     setReviews(reviewsResponse.data.data.items || []);
                 }
 
+                // Similar Workshops
                 const workshopsResponse = await ApiService.getAllWorkshops();
                 if (workshopsResponse.status === 200 && workshopsResponse.data) {
                     const filteredWorkshops = workshopsResponse.data.data.items.filter(w => w.workshopId !== workshopId);
@@ -99,16 +108,25 @@ const WorkshopDetail = () => {
             userId: userId,
             workshopId: workshopId,
             rating: newReview.rating,
-            comment: newReview.comment,
+            comment: newReview.comment || " " // ✅ Cho phép comment rỗng
         };
+
+        console.log("Sending review:", reviewData);
 
         try {
             const response = await ApiService.createReview(reviewData);
             if (response.status === 200) {
                 message.success('Đánh giá đã được gửi thành công.');
                 setNewReview({ rating: 0, comment: '' });
-                const reviewsResponse = await ApiService.getAllReviews({ workshopId });
+
+                // ✅ Fetch lại review
+                const reviewsResponse = await ApiService.getAllReviews({
+                    Page: 1,
+                    PageSize: 10,
+                    workshopId: workshopId
+                });
                 if (reviewsResponse.status === 200 && reviewsResponse.data) {
+                    console.log("Fetched reviews after submit:", reviewsResponse.data.data.items);
                     setReviews(reviewsResponse.data.data.items || []);
                 }
             } else {
@@ -116,6 +134,57 @@ const WorkshopDetail = () => {
             }
         } catch (error) {
             message.error('Đã xảy ra lỗi khi gửi đánh giá.');
+            console.error("Review submit error:", error);
+        }
+    };
+
+    const handleEditReview = async (reviewId, currentRating, currentComment) => {
+        const updatedReview = {
+            reviewId: reviewId,
+            userId: userId,
+            workshopId: workshopId,
+            rating: currentRating,
+            comment: currentComment || " "
+        };
+        try {
+            const response = await ApiService.updateReview(reviewId, updatedReview);
+            if (response.status === 200) {
+                message.success('Đánh giá đã được cập nhật thành công.');
+                const reviewsResponse = await ApiService.getAllReviews({
+                    Page: 1,
+                    PageSize: 10,
+                    workshopId: workshopId
+                });
+                if (reviewsResponse.status === 200 && reviewsResponse.data) {
+                    setReviews(reviewsResponse.data.data.items || []);
+                }
+            } else {
+                message.error(response.message || 'Không thể cập nhật đánh giá.');
+            }
+        } catch (error) {
+            message.error('Đã xảy ra lỗi khi cập nhật đánh giá.');
+            console.error(error);
+        }
+    };
+
+    const handleDeleteReview = async (reviewId) => {
+        try {
+            const response = await ApiService.deleteReview(reviewId);
+            if (response.status === 200) {
+                message.success('Đánh giá đã được xóa thành công.');
+                const reviewsResponse = await ApiService.getAllReviews({
+                    Page: 1,
+                    PageSize: 10,
+                    workshopId: workshopId
+                });
+                if (reviewsResponse.status === 200 && reviewsResponse.data) {
+                    setReviews(reviewsResponse.data.data.items || []);
+                }
+            } else {
+                message.error(response.message || 'Không thể xóa đánh giá.');
+            }
+        } catch (error) {
+            message.error('Đã xảy ra lỗi khi xóa đánh giá.');
             console.error(error);
         }
     };
@@ -143,16 +212,20 @@ const WorkshopDetail = () => {
         }
     };
 
+    // ✅ Hàm tách YouTube video ID từ URL
     const extractYouTubeId = (url) => {
-        const regExp = /(?:youtube\.com.*(?:\?v=|\/embed\/)|youtu\.be\/)([^&?/]+)/;
-        const match = url.match(regExp);
-        return match && match[1] ? match[1] : null;
+        if (!url) return '';
+        const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/;
+        const match = url.match(regex);
+        return match ? match[1] : '';
     };
 
     if (loading) {
         return <LoadingScreen />;
     }
     if (!workshop) return <div className="min-h-screen flex items-center justify-center"><div className="text-gray-600">Không thể tải thông tin workshop.</div></div>;
+
+    const displayedReviews = showAllReviews ? reviews.slice(0, 15) : reviews.slice(0, 5);
 
     return (
         <div className="min-h-screen">
@@ -211,7 +284,7 @@ const WorkshopDetail = () => {
                         {workshop.introVideoUrl && (
                             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
                                 <h2 className="text-xl font-semibold text-gray-900 mb-4">VIDEO GIỚI THIỆU</h2>
-                                <div className="relative" style={{ paddingBottom: '56.25%' }}>
+                                <div className="relative">
                                     <iframe
                                         className="w-full h-64 md:h-96 rounded-lg"
                                         src={`https://www.youtube.com/embed/${extractYouTubeId(workshop.introVideoUrl)}`}
@@ -219,7 +292,6 @@ const WorkshopDetail = () => {
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                         allowFullScreen
                                     />
-
                                 </div>
                             </div>
                         )}
@@ -237,25 +309,47 @@ const WorkshopDetail = () => {
                                 <span className="text-sm text-gray-500 ml-2">Đánh giá gần đây</span>
                             </h2>
                             <div className="space-y-4 mb-6">
-                                {reviews.map((review) => (
-                                    <div key={review.id} className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
+                                {displayedReviews.map((review) => (
+                                    <div key={review.reviewId} className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
                                         <img
                                             src={review.avatar || 'https://images.unsplash.com/photo-1494790108755-2616b612b789?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80'}
-                                            alt={review.name}
+                                            alt={review.userId}
                                             className="w-12 h-12 rounded-full object-cover"
                                         />
                                         <div className="flex-1">
                                             <div className="flex items-center justify-between mb-2">
-                                                <h4 className="font-medium text-gray-900">{review.name || 'Anonymous'}</h4>
-                                                <div className="flex items-center">
+                                                <h4 className="font-medium text-gray-900">{review.userName || review.userId}</h4>
+                                                <div className="flex items-center space-x-2">
                                                     <Star size={16} className="text-yellow-500 fill-current mr-1" />
                                                     <span className="text-sm font-medium text-gray-900">{review.rating || 0}</span>
+                                                    {userId === review.userId && (
+                                                        <>
+                                                            <Edit
+                                                                size={16}
+                                                                className="text-blue-500 cursor-pointer ml-2"
+                                                                onClick={() => handleEditReview(review.reviewId, review.rating, review.comment)}
+                                                            />
+                                                            <Trash
+                                                                size={16}
+                                                                className="text-red-500 cursor-pointer ml-2"
+                                                                onClick={() => handleDeleteReview(review.reviewId)}
+                                                            />
+                                                        </>
+                                                    )}
                                                 </div>
                                             </div>
                                             <p className="text-gray-600 text-sm">{review.comment || 'No comment'}</p>
                                         </div>
                                     </div>
                                 ))}
+                                {reviews.length > 5 && (
+                                    <button
+                                        onClick={() => setShowAllReviews(!showAllReviews)}
+                                        className="text-blue-500 hover:underline mt-2"
+                                    >
+                                        {showAllReviews ? 'Thu gọn' : 'Xem thêm'}
+                                    </button>
+                                )}
                             </div>
 
                             {ApiService.isAuthenticated() && (

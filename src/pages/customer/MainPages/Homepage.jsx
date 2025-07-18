@@ -124,6 +124,15 @@ const Homepage = () => {
     hover: { scale: 1.05, transition: { duration: 0.2 } }
   };
 
+  const cardVariants = {
+    hover: { 
+      scale: 1.05, 
+      y: -10, 
+      transition: { duration: 0.2 },
+      boxShadow: "0 10px 20px rgba(0,0,0,0.2)"
+    }
+  };
+
   if (loading) {
     return <LoadingScreen />;
   }
@@ -263,8 +272,9 @@ const Homepage = () => {
                   className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
                   initial="hidden"
                   whileInView="visible"
+                  whileHover="hover"
                   viewport={{ once: true }}
-                  variants={sectionVariants}
+                  variants={cardVariants}
                 >
                   <div className="relative">
                     <img
@@ -332,8 +342,9 @@ const Homepage = () => {
                   className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
                   initial="hidden"
                   whileInView="visible"
+                  whileHover="hover"
                   viewport={{ once: true }}
-                  variants={sectionVariants}
+                  variants={cardVariants}
                 >
                   <div className="relative">
                     <img
@@ -402,8 +413,9 @@ const Homepage = () => {
                   className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
                   initial="hidden"
                   whileInView="visible"
+                  whileHover="hover"
                   viewport={{ once: true }}
-                  variants={sectionVariants}
+                  variants={cardVariants}
                 >
                   <div className="relative">
                     <img
