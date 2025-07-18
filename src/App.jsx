@@ -19,6 +19,7 @@ import UserProfile from './pages/customer/MainPages/UserProfile';
 import Checkout from './pages/customer/MainPages/Checkout';
 import PaymentHistory from './pages/customer/MainPages/PaymentHistory';
 import PaymentSuccess from './pages/utilities/PaymentSuccess';
+import PaymentFailure from './pages/utilities/PaymentFailure';
 
 import AboutUs from './pages/customer/AdditionPages/AboutUs';
 import LegalTerms from './pages/customer/AdditionPages/LegalTerms';
@@ -102,6 +103,7 @@ const App = () => {
         <Route path='/checkout' element={<RestrictedRoute element={<Checkout />} allowedRoles={['USER']} />} />
         <Route path='/paymenthistory' element={<RestrictedRoute element={<PaymentHistory />} allowedRoles={['USER']} />} />
         <Route path="/payment/success" element={<RestrictedRoute element={<PaymentSuccess />} allowedRoles={['USER']} />} />
+        <Route path="/payment/failure" element={<ProtectedRoute element={<PaymentFailure />} allowedRoles={['USER']} />} />
 
         <Route path='/aboutus' element={<ProtectedRoute element={<AboutUs />} allowedRoles={['USER']} allowGuest={true} />} />
         <Route path='/legalterms' element={<ProtectedRoute element={<LegalTerms />} allowedRoles={['USER']} allowGuest={true} />} />
