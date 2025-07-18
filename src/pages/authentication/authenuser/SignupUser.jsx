@@ -14,9 +14,28 @@ const SignupUser = () => {
     isOrganizer: false,
     accountBank: '',
   });
-
+  const [passwordError, setPasswordError] = useState('');
 
   const navigate = useNavigate();
+
+  const validatePassword = (password) => {
+    if (password.length < 8) {
+      return 'Mật khẩu phải có ít nhất 8 ký tự.';
+    }
+    if (!/[A-Z]/.test(password)) {
+      return 'Mật khẩu phải chứa ít nhất 1 chữ hoa.';
+    }
+    if (!/[a-z]/.test(password)) {
+      return 'Mật khẩu phải chứa ít nhất 1 chữ thường.';
+    }
+    if (!/[0-9]/.test(password)) {
+      return 'Mật khẩu phải chứa ít nhất 1 số.';
+    }
+    if (!/[^a-zA-Z0-9]/.test(password)) {
+      return 'Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt.';
+    }
+    return '';
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -24,12 +43,23 @@ const SignupUser = () => {
       ...formData,
       [name]: type === 'checkbox' ? checked : value,
     });
+
+    if (name === 'password') {
+      setPasswordError(validatePassword(value));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       Swal.fire('Error', 'Mật khẩu không khớp', 'error');
+      return;
+    }
+
+    const passwordValidationMsg = validatePassword(formData.password);
+    if (passwordValidationMsg) {
+      setPasswordError(passwordValidationMsg);
+      Swal.fire('Lỗi', passwordValidationMsg, 'error');
       return;
     }
 
@@ -128,8 +158,19 @@ const SignupUser = () => {
 
               <div className="mb-6">
                 <label className="block text-gray-600 font-medium mb-2">Mật Khẩu</label>
-                <input type="password" name="password" value={formData.password} onChange={handleChange} className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-900 outline-none" placeholder="Tạo mật khẩu" required />
-                <p className="text-xs text-gray-500 mt-1">Mật khẩu phải dài ít nhất 8 ký tự</p>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-900 outline-none"
+                  placeholder="Tạo mật khẩu"
+                  required
+                />
+                <p className="text-xs text-gray-500 mt-1">Mật khẩu phải dài ít nhất 8 ký tự, có chữ hoa, chữ thường, số và ký tự đặc biệt.</p>
+                {passwordError && (
+                  <p className="text-xs text-red-500 mt-1">{passwordError}</p>
+                )}
               </div>
 
               <div className="mb-6">
@@ -146,14 +187,14 @@ const SignupUser = () => {
 
               {formData.isOrganizer && (
                 <div className="mb-6">
-                  <label className="block text-gray-600 font-medium mb-2">Số Tài Khoản</label>
+                  <label className="block text-gray-600 font-medium mb-2">Số Tài Khoản và Tên Ngân Hàng</label>
                   <input
                     type="text"
-                    name="accountBank" // thay vì accountNumber
+                    name="accountBank"
                     value={formData.accountBank}
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-900 outline-none"
-                    placeholder="Tạo mật khẩu"
+                    placeholder="Ví dụ: 123456789 - Ngân hàng ABC"
                     required
                   />
                 </div>
