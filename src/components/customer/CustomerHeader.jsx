@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { User, Search, LogOut, Wallet } from 'lucide-react';
+import { User, Search, LogOut, Wallet, MessageSquareHeart  } from 'lucide-react';
 import { Dropdown, message } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import ApiService from '../../service/ApiService';
@@ -103,6 +103,18 @@ const CustomerHeader = () => {
                 <Link to="/paymenthistory" className="flex items-center space-x-2 px-2 py-1">
                     <Wallet size={16} />
                     <span>Lịch sử thanh toán</span>
+                </Link>
+            ),
+            disabled: !isLoggedIn,
+        },{
+            type: 'divider',
+        },
+        {
+            key: 'reviewhistory',
+            label: (
+                <Link to="/reviewhistory" className="flex items-center space-x-2 px-2 py-1">
+                    <MessageSquareHeart size={16} />
+                    <span>Lịch sử đánh giá</span>
                 </Link>
             ),
             disabled: !isLoggedIn,

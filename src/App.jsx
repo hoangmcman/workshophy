@@ -18,6 +18,7 @@ import WorkshopDetail from './pages/customer/MainPages/WorkshopDetail';
 import UserProfile from './pages/customer/MainPages/UserProfile';
 import Checkout from './pages/customer/MainPages/Checkout';
 import PaymentHistory from './pages/customer/MainPages/PaymentHistory';
+import ReviewHistory from './pages/customer/MainPages/ReviewHistory';
 import PaymentSuccess from './pages/utilities/PaymentSuccess';
 import PaymentFailed from './pages/utilities/PaymentFailure';
 import PaymentCancel from './pages/utilities/PaymentCancel';
@@ -103,9 +104,10 @@ const App = () => {
         <Route path='/userprofile' element={<RestrictedRoute element={<UserProfile />} allowedRoles={['USER']} />} />
         <Route path='/checkout' element={<RestrictedRoute element={<Checkout />} allowedRoles={['USER']} />} />
         <Route path='/paymenthistory' element={<RestrictedRoute element={<PaymentHistory />} allowedRoles={['USER']} />} />
+        <Route path='/reviewhistory' element={<RestrictedRoute element={<ReviewHistory />} allowedRoles={['USER']} />} />
         <Route path="/payment/success" element={<RestrictedRoute element={<PaymentSuccess />} allowedRoles={['USER']} />} />
         <Route path="/payment/failed" element={<RestrictedRoute element={<PaymentFailed />} allowedRoles={['USER']} />} />
-        <Route path="/payment/cancel" element={<RestrictedRoute element={<PaymentCancel />} allowedRoles={['USER']} />} />
+        <Route path="/payment/cancel" element={<RestrictedRoute element={<PaymentCancel />} allowedRoles={['USER']} />} />    
 
         <Route path='/aboutus' element={<ProtectedRoute element={<AboutUs />} allowedRoles={['USER']} allowGuest={true} />} />
         <Route path='/legalterms' element={<ProtectedRoute element={<LegalTerms />} allowedRoles={['USER']} allowGuest={true} />} />

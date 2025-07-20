@@ -11,7 +11,6 @@ import {
     XCircle,
     AlertCircle,
     Search,
-    Filter
 } from 'lucide-react';
 import CustomerHeader from '../../../components/customer/CustomerHeader';
 import CustomeFooter from '../../../components/customer/CustomeFooter';
@@ -22,7 +21,6 @@ const PaymentHistory = () => {
     const [payments, setPayments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
-    const [statusFilter, setStatusFilter] = useState('all');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -35,7 +33,16 @@ const PaymentHistory = () => {
                 });
 
                 if (response.status === 200 && response.data.success) {
-                    setPayments(response.data.data.items || []);
+                    // Sắp xếp theo trạng thái: Thành công (1) -> Đang xử lý (2) -> Thất bại (0)
+                    const sortedPayments = response.data.data.items.map(payment => ({
+                        ...payment,
+                        bookings: payment.bookings.sort((a, b) => b.status - a.status)
+                    })).sort((a, b) => {
+                        const statusA = a.bookings[0]?.status || 0;
+                        const statusB = b.bookings[0]?.status || 0;
+                        return statusB - statusA; // 1 > 2 > 0
+                    });
+                    setPayments(sortedPayments);
                 } else {
                     console.error('Failed to fetch payments:', response.message);
                     setPayments([]);
@@ -113,10 +120,7 @@ const PaymentHistory = () => {
                 booking.orderCode.toString().includes(searchTerm)
             );
 
-        if (statusFilter === 'all') return matchesSearch;
-        return matchesSearch && payment.bookings.some(booking =>
-            booking.status.toString() === statusFilter
-        );
+        return matchesSearch;
     });
 
     if (loading) {
@@ -143,7 +147,7 @@ const PaymentHistory = () => {
                 {/* Header */}
                 <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center">
-                        <a href="/userprofile" className="mr-4 p-2 hover:bg-gray-100 rounded-full transition-colors">
+                        <a href="/" className="mr-4 p-2 hover:bg-gray-100 rounded-full transition-colors">
                             <ArrowLeft size={24} className="text-gray-600 hover:text-gray-900" />
                         </a>
                         <div>
@@ -159,7 +163,7 @@ const PaymentHistory = () => {
                     </div>
                 </div>
 
-                {/* Search and Filter */}
+                {/* Search */}
                 <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1 relative">
@@ -172,26 +176,31 @@ const PaymentHistory = () => {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Filter size={20} className="text-gray-400" />
-                            <select
-                                className="px
+                    </div>
+                </div>
 
--4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#091238] focus:border-transparent"
-                                value={statusFilter}
-                                onChange={(e) => setStatusFilter(e.target.value)}
-                            >
-                                <option value="all">Tất cả trạng thái</option>
-                                <option value="1">Thành công</option>
-                                <option value="0">Thất bại</option>
-                                <option value="2">Đang xử lý</option>
-                            </select>
+                {/* Summary Card */}
+                <div className="mt-8 bg-gradient-to-r from-[#091238] to-[#1e3a8a] text-white rounded-lg p-6">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h3 className="text-lg font-semibold mb-2">Tổng quan thanh toán</h3>
+                            <p className="text-sm opacity-80">
+                                Tổng cộng {payments.length} giao dịch
+                            </p>
+                        </div>
+                        <div className="text-right">
+                            <div className="text-2xl font-bold mb-1">
+                                {formatCurrency(
+                                    payments.reduce((total, payment) => total + payment.totalAmount, 0)
+                                )}
+                            </div>
+                            <div className="text-sm opacity-80">Tổng chi tiêu</div>
                         </div>
                     </div>
                 </div>
 
                 {/* Payment History List */}
-                <div className="space-y-6">
+                <div className="space-y-6 mt-5">
                     {filteredPayments.length === 0 ? (
                         <div className="bg-white rounded-lg shadow-sm p-12 text-center">
                             <Receipt size={48} className="mx-auto text-gray-400 mb-4" />
@@ -199,7 +208,6 @@ const PaymentHistory = () => {
                                 Bạn chưa thanh toán hay đặt vé workshop nào hết
                             </h3>
                             <a
-                                // href="/"
                                 onClick={() => navigate('/', { state: { scrollTo: 'featured' } })}
                                 className="inline-block bg-[#091238] text-white px-6 py-2 rounded-lg hover:bg-[#1e3a8a] transition-colors cursor-pointer"
                             >
@@ -285,26 +293,6 @@ const PaymentHistory = () => {
                             </div>
                         ))
                     )}
-                </div>
-
-                {/* Summary Card */}
-                <div className="mt-8 bg-gradient-to-r from-[#091238] to-[#1e3a8a] text-white rounded-lg p-6">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h3 className="text-lg font-semibold mb-2">Tổng quan thanh toán</h3>
-                            <p className="text-sm opacity-80">
-                                Tổng cộng {payments.length} giao dịch
-                            </p>
-                        </div>
-                        <div className="text-right">
-                            <div className="text-2xl font-bold mb-1">
-                                {formatCurrency(
-                                    payments.reduce((total, payment) => total + payment.totalAmount, 0)
-                                )}
-                            </div>
-                            <div className="text-sm opacity-80">Tổng chi tiêu</div>
-                        </div>
-                    </div>
                 </div>
             </div>
             <CustomeFooter />

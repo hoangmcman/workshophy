@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { Calendar, Clock, MapPin, Users, Eye, Star, Edit, Trash } from 'lucide-react';
+import { Calendar, MapPin, Users, Eye, Star } from 'lucide-react';
 import CustomerHeader from '../../../components/customer/CustomerHeader';
 import CustomeFooter from '../../../components/customer/CustomeFooter';
 import ApiService from '../../../service/ApiService';
 import { message } from 'antd';
-
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import LoadingScreen from '../../utilities/LoadingScreen';
+import Swal from 'sweetalert2';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -19,12 +19,8 @@ const WorkshopDetail = () => {
     const navigate = useNavigate();
     const [workshop, setWorkshop] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [selectedDate, setSelectedDate] = useState(null);
-    const [reviews, setReviews] = useState([]);
     const [similarWorkshops, setSimilarWorkshops] = useState([]);
     const [newReview, setNewReview] = useState({ rating: 0, comment: '' });
-    const [userCanReview, setUserCanReview] = useState(false);
-    const [showAllReviews, setShowAllReviews] = useState(false);
     const userId = localStorage.getItem('userId');
 
     const mapStatusToDisplay = (status) => {
@@ -55,27 +51,6 @@ const WorkshopDetail = () => {
                 };
                 setWorkshop(mappedWorkshop);
 
-                // Check user can review
-                const ticketsResponse = await ApiService.getWorkshopTickets();
-                if (ticketsResponse.status === 200 && ticketsResponse.data) {
-                    const userTickets = ticketsResponse.data.data.items.filter(
-                        ticket => ticket.userId === userId && ticket.workshopId === workshopId && ticket.paymentStatus === 'Completed'
-                    );
-                    setUserCanReview(userTickets.length > 0);
-                }
-
-                // ✅ Fetch Reviews
-                const reviewsResponse = await ApiService.getAllReviews({
-                    Page: 1,
-                    PageSize: 10,
-                    workshopId: workshopId
-                });
-                if (reviewsResponse.status === 200 && reviewsResponse.data) {
-                    console.log("Fetched reviews:", reviewsResponse.data.data.items);
-                    setReviews(reviewsResponse.data.data.items || []);
-                }
-
-                // Similar Workshops
                 const workshopsResponse = await ApiService.getAllWorkshops();
                 if (workshopsResponse.status === 200 && workshopsResponse.data) {
                     const filteredWorkshops = workshopsResponse.data.data.items.filter(w => w.workshopId !== workshopId);
@@ -95,103 +70,7 @@ const WorkshopDetail = () => {
             message.error('Không tìm thấy ID workshop.');
             setLoading(false);
         }
-    }, [workshopId, userId]);
-
-    const handleReviewSubmit = async (e) => {
-        e.preventDefault();
-        if (!userCanReview) {
-            message.error('Bạn cần hoàn thành đặt vé và thanh toán để để lại đánh giá.');
-            return;
-        }
-
-        const reviewData = {
-            userId: userId,
-            workshopId: workshopId,
-            rating: newReview.rating,
-            comment: newReview.comment || " " // ✅ Cho phép comment rỗng
-        };
-
-        console.log("Sending review:", reviewData);
-
-        try {
-            const response = await ApiService.createReview(reviewData);
-            if (response.status === 200) {
-                message.success('Đánh giá đã được gửi thành công.');
-                setNewReview({ rating: 0, comment: '' });
-
-                // ✅ Fetch lại review
-                const reviewsResponse = await ApiService.getAllReviews({
-                    Page: 1,
-                    PageSize: 10,
-                    workshopId: workshopId
-                });
-                if (reviewsResponse.status === 200 && reviewsResponse.data) {
-                    console.log("Fetched reviews after submit:", reviewsResponse.data.data.items);
-                    setReviews(reviewsResponse.data.data.items || []);
-                }
-            } else {
-                message.error(response.message || 'Không thể gửi đánh giá.');
-            }
-        } catch (error) {
-            message.error('Đã xảy ra lỗi khi gửi đánh giá.');
-            console.error("Review submit error:", error);
-        }
-    };
-
-    const handleEditReview = async (reviewId, currentRating, currentComment) => {
-        const updatedReview = {
-            reviewId: reviewId,
-            userId: userId,
-            workshopId: workshopId,
-            rating: currentRating,
-            comment: currentComment || " "
-        };
-        try {
-            const response = await ApiService.updateReview(reviewId, updatedReview);
-            if (response.status === 200) {
-                message.success('Đánh giá đã được cập nhật thành công.');
-                const reviewsResponse = await ApiService.getAllReviews({
-                    Page: 1,
-                    PageSize: 10,
-                    workshopId: workshopId
-                });
-                if (reviewsResponse.status === 200 && reviewsResponse.data) {
-                    setReviews(reviewsResponse.data.data.items || []);
-                }
-            } else {
-                message.error(response.message || 'Không thể cập nhật đánh giá.');
-            }
-        } catch (error) {
-            message.error('Đã xảy ra lỗi khi cập nhật đánh giá.');
-            console.error(error);
-        }
-    };
-
-    const handleDeleteReview = async (reviewId) => {
-        try {
-            const response = await ApiService.deleteReview(reviewId);
-            if (response.status === 200) {
-                message.success('Đánh giá đã được xóa thành công.');
-                const reviewsResponse = await ApiService.getAllReviews({
-                    Page: 1,
-                    PageSize: 10,
-                    workshopId: workshopId
-                });
-                if (reviewsResponse.status === 200 && reviewsResponse.data) {
-                    setReviews(reviewsResponse.data.data.items || []);
-                }
-            } else {
-                message.error(response.message || 'Không thể xóa đánh giá.');
-            }
-        } catch (error) {
-            message.error('Đã xảy ra lỗi khi xóa đánh giá.');
-            console.error(error);
-        }
-    };
-
-    const handleRatingChange = (rating) => {
-        setNewReview({ ...newReview, rating });
-    };
+    }, [workshopId]);
 
     const handleBookNow = () => {
         if (workshop && userId) {
@@ -212,7 +91,6 @@ const WorkshopDetail = () => {
         }
     };
 
-    // ✅ Hàm tách YouTube video ID từ URL
     const extractYouTubeId = (url) => {
         if (!url) return '';
         const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/;
@@ -220,12 +98,43 @@ const WorkshopDetail = () => {
         return match ? match[1] : '';
     };
 
+    const handleAddReview = async () => {
+        if (!userId || !newReview.rating || !newReview.comment) {
+            message.error('Vui lòng điền đầy đủ đánh giá và bình luận.');
+            return;
+        }
+        try {
+            const payload = {
+                rating: newReview.rating,
+                comment: newReview.comment,
+                workshopId: workshopId
+            };
+            const res = await ApiService.createReview(payload);
+            if (res.status === 200) {
+                Swal.fire({
+                    title: 'Cảm ơn bạn đã quan tâm!',
+                    text: 'Nhấn vào đây để xem hoặc thêm đánh giá.',
+                    icon: 'success',
+                    showCancelButton: true,
+                    confirmButtonText: 'Xem review',
+                    cancelButtonText: 'Ở lại trang',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        navigate('/reviewhistory');
+                    }
+                });
+                setNewReview({ rating: 0, comment: '' }); // Reset form but keep it open
+            }
+        } catch (err) {
+            message.error('Lỗi khi thêm đánh giá.');
+            console.error(err);
+        }
+    };
+
     if (loading) {
         return <LoadingScreen />;
     }
     if (!workshop) return <div className="min-h-screen flex items-center justify-center"><div className="text-gray-600">Không thể tải thông tin workshop.</div></div>;
-
-    const displayedReviews = showAllReviews ? reviews.slice(0, 15) : reviews.slice(0, 5);
 
     return (
         <div className="min-h-screen">
@@ -303,90 +212,33 @@ const WorkshopDetail = () => {
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-lg shadow-sm p-6">
-                            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                                ĐÁNH GIÁ
-                                <span className="text-sm text-gray-500 ml-2">Đánh giá gần đây</span>
-                            </h2>
-                            <div className="space-y-4 mb-6">
-                                {displayedReviews.map((review) => (
-                                    <div key={review.reviewId} className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
-                                        <img
-                                            src={review.avatar || 'https://images.unsplash.com/photo-1494790108755-2616b612b789?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80'}
-                                            alt={review.userId}
-                                            className="w-12 h-12 rounded-full object-cover"
-                                        />
-                                        <div className="flex-1">
-                                            <div className="flex items-center justify-between mb-2">
-                                                <h4 className="font-medium text-gray-900">{review.userName || review.userId}</h4>
-                                                <div className="flex items-center space-x-2">
-                                                    <Star size={16} className="text-yellow-500 fill-current mr-1" />
-                                                    <span className="text-sm font-medium text-gray-900">{review.rating || 0}</span>
-                                                    {userId === review.userId && (
-                                                        <>
-                                                            <Edit
-                                                                size={16}
-                                                                className="text-blue-500 cursor-pointer ml-2"
-                                                                onClick={() => handleEditReview(review.reviewId, review.rating, review.comment)}
-                                                            />
-                                                            <Trash
-                                                                size={16}
-                                                                className="text-red-500 cursor-pointer ml-2"
-                                                                onClick={() => handleDeleteReview(review.reviewId)}
-                                                            />
-                                                        </>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <p className="text-gray-600 text-sm">{review.comment || 'No comment'}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                                {reviews.length > 5 && (
-                                    <button
-                                        onClick={() => setShowAllReviews(!showAllReviews)}
-                                        className="text-blue-500 hover:underline mt-2"
-                                    >
-                                        {showAllReviews ? 'Thu gọn' : 'Xem thêm'}
-                                    </button>
-                                )}
-                            </div>
-
-                            {ApiService.isAuthenticated() && (
-                                <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Để lại đánh giá của bạn</h3>
-                                    <form onSubmit={handleReviewSubmit}>
-                                        <div className="mb-4">
-                                            <label className="block text-gray-700 font-medium mb-2">Đánh giá của bạn</label>
-                                            <div className="flex space-x-1">
-                                                {[1, 2, 3, 4, 5].map((star) => (
-                                                    <Star
-                                                        key={star}
-                                                        size={24}
-                                                        className={`cursor-pointer ${newReview.rating >= star ? 'text-yellow-500 fill-current' : 'text-gray-300'}`}
-                                                        onClick={() => handleRatingChange(star)}
-                                                    />
-                                                ))}
-                                            </div>
-                                        </div>
-                                        <div className="mb-4">
-                                            <label className="block text-gray-700 font-medium mb-2">Bình luận</label>
-                                            <textarea
-                                                value={newReview.comment}
-                                                onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                rows="4"
-                                                placeholder="Viết nhận xét của bạn..."
+                        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+                            <h2 className="text-xl font-semibold text-gray-900 mb-4">ĐÁNH GIÁ</h2>
+                            {userId && (
+                                <div className="mb-6">
+                                    <h3 className="text-lg font-medium mb-2">Thêm đánh giá của bạn</h3>
+                                    <div className="flex items-center mb-2">
+                                        {[1, 2, 3, 4, 5].map((star) => (
+                                            <Star
+                                                key={star}
+                                                size={24}
+                                                className={`cursor-pointer ${newReview.rating >= star ? 'text-yellow-400' : 'text-gray-300'}`}
+                                                onClick={() => setNewReview({ ...newReview, rating: star })}
                                             />
-                                        </div>
-                                        <button
-                                            type="submit"
-                                            className="w-full bg-[#091238] text-white py-2 px-4 rounded-lg hover:bg-opacity-90 transition-colors"
-                                            disabled={!userCanReview || !newReview.rating}
-                                        >
-                                            Gửi đánh giá
-                                        </button>
-                                    </form>
+                                        ))}
+                                    </div>
+                                    <textarea
+                                        className="w-full p-2 border rounded-lg mb-2"
+                                        placeholder="Viết bình luận của bạn..."
+                                        value={newReview.comment}
+                                        onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                                    />
+                                    <button
+                                        onClick={handleAddReview}
+                                        className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+                                    >
+                                        Gửi đánh giá
+                                    </button>
                                 </div>
                             )}
                         </div>

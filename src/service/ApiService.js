@@ -940,10 +940,10 @@ export default class ApiService {
     }
 
     /**
-     * Get a list of all reviews
-     * @param {Object} params - Query parameters (pageSize, page, searchTerm, includeDeleted, arrayobject)
-     * @returns {Promise<Object>} Response object with status and data/message
-     */
+         * Get a list of all reviews
+         * @param {Object} params - Query parameters (pageSize, page, searchTerm, includeDeleted, star, helpfulCount, date, workshopId)
+         * @returns {Promise<Object>} Response object with status and data/message
+         */
     static async getAllReviews(params = {}) {
         try {
             const response = await axios.get(
@@ -965,27 +965,40 @@ export default class ApiService {
             console.error("Error fetching all reviews:", error);
             return {
                 status: error.response?.status || 400,
-                message: error.response?.data?.message || error.message || "Failed to fetch reviews"
+                message: error.response?.data?.message || "Failed to fetch reviews"
             };
         }
     }
 
     /**
      * Create a new review
-     * @param {Object} reviewData - The review data containing userId, workshopId, rating, and comment
+     * @param {Object} reviewData - The review data containing rating, comment, and helpfulCount
      * @returns {Promise<Object>} Response object with status and data/message
      */
     static async createReview(reviewData) {
         try {
-            if (!reviewData.userId || !reviewData.workshopId || !reviewData.rating || !reviewData.comment) {
-                throw new Error("User ID, Workshop ID, rating, and comment are required");
+            const userId = localStorage.getItem("userId");
+            if (!userId) {
+                throw new Error("User ID is required");
+            }
+            const workshopId = reviewData.workshopId; // Assuming workshopId is passed, will be validated
+            if (!workshopId) {
+                throw new Error("Workshop ID is required");
             }
 
-            console.log("Creating new review with data:", reviewData);
+            const payload = {
+                userId: userId,
+                workshopId: workshopId,
+                rating: reviewData.rating,
+                comment: reviewData.comment,
+                helpfulCount: reviewData.helpfulCount || 0
+            };
+
+            console.log("Creating new review with data:", payload);
 
             const response = await axios.post(
                 `${this.BASE_URL}/api/v1/Review`,
-                reviewData,
+                payload,
                 { headers: this.getHeader() }
             );
 
@@ -1000,7 +1013,7 @@ export default class ApiService {
             console.error("Error creating review:", error);
             return {
                 status: error.response?.status || 400,
-                message: error.response?.data?.message || error.message || "Failed to create review"
+                message: error.response?.data?.message || "Failed to create review"
             };
         }
     }
@@ -1034,7 +1047,7 @@ export default class ApiService {
             console.error("Error fetching review:", error);
             return {
                 status: error.response?.status || 400,
-                message: error.response?.data?.message || error.message || "Failed to fetch review"
+                message: error.response?.data?.message || "Failed to fetch review"
             };
         }
     }
@@ -1042,7 +1055,7 @@ export default class ApiService {
     /**
      * Update a review
      * @param {string} reviewId - The ID of the review to update
-     * @param {Object} reviewData - The updated review data containing userId, workshopId, rating, and comment
+     * @param {Object} reviewData - The updated review data containing rating, comment, and helpfulCount
      * @returns {Promise<Object>} Response object with status and data/message
      */
     static async updateReview(reviewId, reviewData) {
@@ -1050,16 +1063,29 @@ export default class ApiService {
             if (!reviewId) {
                 throw new Error("Review ID is required for update");
             }
-            if (!reviewData.userId || !reviewData.workshopId || !reviewData.rating || !reviewData.comment) {
-                throw new Error("User ID, Workshop ID, rating, and comment are required");
+            const userId = localStorage.getItem("userId");
+            if (!userId) {
+                throw new Error("User ID is required");
+            }
+            const workshopId = reviewData.workshopId; // Assuming workshopId is passed, will be validated
+            if (!workshopId) {
+                throw new Error("Workshop ID is required");
             }
 
+            const payload = {
+                userId: userId,
+                workshopId: workshopId,
+                rating: reviewData.rating,
+                comment: reviewData.comment,
+                helpfulCount: reviewData.helpfulCount || 0
+            };
+
             console.log("Updating review with id:", reviewId);
-            console.log("Update data:", reviewData);
+            console.log("Update data:", payload);
 
             const response = await axios.put(
-                `${this.BASE_URL}/api/v1/Review`,
-                { reviewId, ...reviewData },
+                `${this.BASE_URL}/api/v1/Review/${reviewId}`,
+                payload,
                 { headers: this.getHeader() }
             );
 
@@ -1074,7 +1100,7 @@ export default class ApiService {
             console.error("Error updating review:", error);
             return {
                 status: error.response?.status || 400,
-                message: error.response?.data?.message || error.message || "Failed to update review"
+                message: error.response?.data?.message || "Failed to update review"
             };
         }
     }
@@ -1107,7 +1133,7 @@ export default class ApiService {
             console.error("Error deleting review:", error);
             return {
                 status: error.response?.status || 400,
-                message: error.response?.data?.message || error.message || "Failed to delete review"
+                message: error.response?.data?.message || "Failed to delete review"
             };
         }
     }
